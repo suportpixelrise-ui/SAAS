@@ -1,0 +1,7 @@
+# Os dois sites usam este mesmo arquivo. O que muda é a variável NEXT_PUBLIC_APP de cada site no Netlify.
+[build]
+  command = "node scripts/site.mjs"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "24"

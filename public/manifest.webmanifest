@@ -1,0 +1,10 @@
+{
+  "name": "Cobrança e Sobra",
+  "short_name": "Cobrança",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F7FA",
+  "theme_color": "#3A4AFF",
+  "icons": [{ "src": "/icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

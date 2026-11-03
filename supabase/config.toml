@@ -1,0 +1,9 @@
+project_id = "jjobijwytjwxfbyjejma"
+
+# As duas funções conferem quem chamou no próprio código: "assinatura" pelo login da pessoa,
+# "asaas-webhook" pelo token do Asaas.
+[functions.assinatura]
+verify_jwt = false
+
+[functions.asaas-webhook]
+verify_jwt = false
