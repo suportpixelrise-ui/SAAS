@@ -34,8 +34,10 @@ Asaas ──webhook──> Edge Function asaas-webhook ──> libera ou corta o
 As tabelas, as regras e as duas funções ficam em `supabase/`. O que falta é feito no painel do projeto (https://supabase.com/dashboard):
 
 1. **Endereços do login:** em **Authentication › URL Configuration**:
-   - em **Site URL**, coloque o endereço principal (por exemplo, o do site da Cobrança);
-   - em **Redirect URLs**, adicione `https://ENDERECO-DA-COBRANCA/**`, `https://ENDERECO-DO-SOBRA/**` e `http://localhost:3000/**`.
+   - **Site URL:** `https://cobranca-clientes.netlify.app`;
+   - **Redirect URLs:** `https://cobranca-clientes.netlify.app/**`, `https://sobra-precos.netlify.app/**` e `http://localhost:3000/**`.
+
+   Já está feito. Se trocar o endereço de um site, atualize aqui.
 
    Sem isso, o link do e-mail não volta para o site certo.
 2. **E-mail de login:** em **Authentication › Emails › SMTP Settings**, cadastre um serviço de e-mail próprio (Resend, Brevo, SendGrid ou outro). O e-mail que vem pronto no Supabase é só para teste e tem um limite bem baixo por hora. **Sem isso, seus clientes não conseguem entrar.**
@@ -76,9 +78,11 @@ O código deste app fica no repositório **SAAS** do GitHub (só a pasta `plataf
    | Publish directory | `out` |
 
 3. Em **Environment variables**, crie `NEXT_PUBLIC_APP` com o valor `cobranca` (no primeiro site) ou `sobra` (no segundo).
-4. Publique e coloque o endereço de cada site nas **Redirect URLs** do passo 1.
+4. Publique. Os dois sites já existem: `cobranca-clientes` e `sobra-precos`.
 
 Depois disso, cada atualização enviada ao GitHub publica os dois sites sozinha.
+
+**Limite do plano gratuito do Netlify:** são 300 créditos por mês, e cada publicação gasta 15. Como cada atualização publica os dois sites, ela gasta 30 créditos. Isso dá no máximo 10 atualizações por mês, menos o que as visitas consomem. Quando os créditos acabam, os sites seguem no ar, mas nada novo é publicado até o ciclo virar. Por isso, junte as mudanças e envie de uma vez.
 
 A mesma conta funciona nos dois sites, mas a pessoa entra uma vez em cada um, porque são endereços diferentes.
 
