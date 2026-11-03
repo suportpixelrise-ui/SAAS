@@ -77,7 +77,7 @@ O código deste app fica no repositório **SAAS** do GitHub (só a pasta `plataf
    | Build command | `node scripts/site.mjs` |
    | Publish directory | `out` |
 
-3. Em **Environment variables**, crie `NEXT_PUBLIC_APP` com o valor `cobranca` (no primeiro site) ou `sobra` (no segundo).
+3. Em **Environment variables**, crie `NEXT_PUBLIC_APP` com o valor `cobranca` (no primeiro site) ou `sobra` (no segundo), e `NETLIFY_NEXT_PLUGIN_SKIP` com o valor `true` nos dois.
 4. Publique. Os dois sites já existem: `cobranca-clientes` e `sobra-precos`.
 
 Depois disso, cada atualização enviada ao GitHub publica os dois sites sozinha.
