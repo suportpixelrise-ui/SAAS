@@ -2,8 +2,8 @@
 // Campo vazio aparece destacado nas páginas, para não publicar sem querer.
 
 export const EMPRESA = {
-  nome: "",
-  cidade: "",
+  nome: "Pixel Rise",
+  cidade: "São Paulo",
 };
 
 export type CampoEmpresa = keyof typeof EMPRESA;
