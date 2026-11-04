@@ -140,7 +140,7 @@ tests/            testes das regras · tests-supabase/ testes da segurança do b
 Os preços dos planos ficam em dois lugares que precisam ser iguais: `src/lib/products.ts` (o que a tela mostra) e `supabase/functions/_shared/plans.js` (o que é cobrado). Um teste confere isso.
 
 ## Decisões provisórias (mudam fácil)
-- **Preços:** Cobrança R$ 29,90 por mês. Sobra R$ 19,90 por mês ou R$ 97,00 por ano.
+- **Preços:** Cobrança R$ 29,99 por mês. Sobra R$ 19,99 por mês ou R$ 97,00 por ano. Na Cakto, o produto custa R$ 0,99 a menos, porque ela soma uma taxa de serviço ao comprador.
 - **Lembretes:** saem 2 dias antes, no dia e depois do vencimento (repetem a cada 7 dias). O app avisa e a pessoa envia cada um com um toque.
 - **Pagamento dos clientes:** marcado à mão, porque não há integração bancária nesta versão.
 

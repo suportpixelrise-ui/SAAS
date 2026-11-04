@@ -2,8 +2,8 @@
 // `prices` tem um valor por app. Com mais de um, vira teste de preço: cada conta cai sempre no mesmo (pelo uid).
 
 export const PLANS = {
-  cobranca: { name: "Cobrança", prices: [2990], yearly: null },
-  sobra: { name: "Sobra", prices: [1990], yearly: 9700 },
+  cobranca: { name: "Cobrança", prices: [2999], yearly: null },
+  sobra: { name: "Sobra", prices: [1999], yearly: 9700 },
 };
 
 export const GUARANTEE_DAYS = 7;
