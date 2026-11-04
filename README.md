@@ -170,12 +170,12 @@ Os preços dos planos ficam em dois lugares que precisam ser iguais: `src/lib/pr
 - **Pagamento dos clientes:** marcado à mão, porque não há integração bancária nesta versão.
 
 ## Compra direta pela Cakto
-Quem paga pelo link sem passar pelo site chega sem o token. O aviso `purchase_approved` procura a conta pelo e-mail da compra (sem espaços e em minúsculas). Se não achar, cria a conta com um convite: o Supabase manda o e-mail de boas-vindas, e o link abre `/entrar/?nova=1&convite=1` para criar a senha. Se o convite falhar, a conta sai sem e-mail e a pessoa usa "Esqueci minha senha".
+Quem paga pelo link sem passar pelo site chega sem o token. O aviso `purchase_approved` procura a conta pelo e-mail da compra (sem espaços e em minúsculas). Se não achar, cria a conta com um convite: o Supabase manda o e-mail de boas-vindas, e o link abre `/entrar/?nova=1&convite=1` para criar a senha. Se o convite falhar, a conta sai sem e-mail e a pessoa chama o suporte.
 
 - Aviso repetido do mesmo pedido não muda nada.
 - Segunda assinatura paga por quem já está ativo é devolvida e cancelada sozinha.
 - O e-mail de boas-vindas é o modelo "Invite user" do Supabase. O texto está em `supabase/templates/boas-vindas.html`.
-- O envio de e-mail usa o SMTP do Resend (Authentication > Emails > SMTP Settings). Sem SMTP próprio, o Supabase só entrega para a equipe do projeto.
+- Por enquanto não há e-mail próprio: a confirmação de e-mail está desligada e "esqueci minha senha" abre o WhatsApp do suporte. Sem SMTP próprio, o convite não chega ao cliente: a conta é criada sem senha e o suporte define uma. Quando ligar o SMTP do Resend (Authentication > Emails > SMTP Settings), o convite volta a funcionar sozinho.
 
 ## Termos e privacidade
 Os dados da empresa ficam em `src/lib/empresa.ts`. Campo vazio aparece destacado nas páginas `/termos/` e `/privacidade/`. Ao mudar o texto, mude também `TERMOS_VERSAO`: a versão aceita fica na conta da pessoa.

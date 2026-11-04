@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { EMPRESA, ROTULOS, TERMOS_VERSAO, type CampoEmpresa } from "@/lib/empresa";
+import { ajudaLink, EMPRESA, ROTULOS, SUPORTE_TEXTO, TERMOS_VERSAO, type CampoEmpresa } from "@/lib/empresa";
 import { fullDate } from "@/lib/format";
 import { PRODUCTS, type ProductId } from "@/lib/products";
 
@@ -10,6 +10,11 @@ export const appDoSite = (): ProductId => (process.env.NEXT_PUBLIC_APP === "sobr
 /** Dado da empresa. Vazio, sai destacado para lembrar de preencher. */
 export function Campo({ k }: { k: CampoEmpresa }) {
   return EMPRESA[k] ? <>{EMPRESA[k]}</> : <mark>[{ROTULOS[k]}]</mark>;
+}
+
+/** Contato do suporte, com link para o WhatsApp. */
+export function Suporte() {
+  return <a href={ajudaLink(PRODUCTS[appDoSite()].name)} target="_blank" rel="noopener">WhatsApp {SUPORTE_TEXTO}</a>;
 }
 
 export function LegalPage({ title, children }: { title: string; children: ReactNode }) {

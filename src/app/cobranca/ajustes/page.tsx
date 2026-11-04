@@ -8,6 +8,7 @@ import { brl } from "@/lib/format";
 import { useSession } from "@/lib/session";
 import { Notice } from "@/components/ui";
 import { useCob } from "../CobData";
+import { ajudaLink } from "@/lib/empresa";
 import { CobShell } from "../shell";
 import { SetupForm } from "../SetupForm";
 
@@ -33,6 +34,8 @@ export default function Ajustes() {
         <SetupForm initial={profile} submitLabel="Salvar" onSaved={() => { setSaved(true); window.scrollTo({ top: 0, behavior: "smooth" }); }} />
       </section>
       <p className="muted small">Conta: {email}</p>
+      <a className="btn ghost" href={ajudaLink("Facilita IA")} target="_blank" rel="noopener">Falar com o suporte</a>
+      <Link className="btn ghost" href="/entrar/?nova=1&volta=/cobranca/ajustes/">Trocar minha senha</Link>
       <button className="btn ghost" onClick={async () => { await sb()!.auth.signOut(); router.replace("/"); }}>Sair</button>
     </CobShell>
   );

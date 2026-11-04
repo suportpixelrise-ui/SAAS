@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { appDoSite, Campo, LegalPage } from "@/components/Legal";
+import { appDoSite, Campo, LegalPage, Suporte } from "@/components/Legal";
 import { brl } from "@/lib/format";
 import { GUARANTEE_DAYS, PRODUCTS } from "@/lib/products";
 
@@ -12,7 +12,7 @@ export default function Termos() {
       <p>Estes termos explicam as regras para usar o {p.name}. Ao criar sua conta ou assinar, você concorda com eles.</p>
 
       <h2>1. Quem somos</h2>
-      <p>O {p.name} é oferecido por <Campo k="razaoSocial" />, CNPJ <Campo k="cnpj" />, com endereço em <Campo k="endereco" />. Fale com a gente pelo e-mail <Campo k="email" />.</p>
+      <p>O {p.name} é oferecido por <Campo k="razaoSocial" />, CNPJ <Campo k="cnpj" />, com endereço em <Campo k="endereco" />. Fale com a gente pelo <Suporte />.</p>
 
       <h2>2. O que é o serviço</h2>
       <p>O {p.name} é um aplicativo na internet para organizar o seu negócio. Você cadastra suas informações, e o app ajuda a acompanhar valores, datas e mensagens.</p>
@@ -22,7 +22,7 @@ export default function Termos() {
       <ul>
         <li>Você precisa ter 18 anos ou mais e informar um e-mail que seja seu.</li>
         <li>Guarde sua senha com cuidado. O que for feito com ela é responsabilidade sua.</li>
-        <li>Se comprar direto pelo link de pagamento, criamos a conta com o e-mail da compra e mandamos um link para você criar a senha.</li>
+        <li>Se comprar direto pelo link de pagamento, criamos a conta com o e-mail da compra. Para definir sua senha, fale com o suporte.</li>
       </ul>
 
       <h2>4. Assinatura e cobrança</h2>
@@ -35,7 +35,7 @@ export default function Termos() {
       </ul>
 
       <h2>5. Garantia de {GUARANTEE_DAYS} dias</h2>
-      <p>Você tem {GUARANTEE_DAYS} dias, contados do primeiro pagamento, para pedir o dinheiro de volta, sem precisar explicar o motivo. O pedido é feito no próprio app, na tela de assinatura, ou pelo e-mail <Campo k="email" />.</p>
+      <p>Você tem {GUARANTEE_DAYS} dias, contados do primeiro pagamento, para pedir o dinheiro de volta, sem precisar explicar o motivo. O pedido é feito no próprio app, na tela de assinatura, ou pelo <Suporte />.</p>
       <p>Devolvemos o valor pago pelo mesmo meio de pagamento e encerramos a assinatura. O acesso termina na hora do pedido. O prazo para o dinheiro aparecer depende da Cakto e do seu banco ou cartão. A garantia vale uma vez por pessoa em cada app.</p>
 
       <h2>6. Cancelamento</h2>

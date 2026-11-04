@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
+import { ajudaLink } from "@/lib/empresa";
 import { GUARANTEE_DAYS, PRODUCTS, type ProductId } from "@/lib/products";
 import { brl } from "@/lib/format";
 import { Icon, type IconName } from "@/components/ui";
@@ -251,6 +252,7 @@ export function Landing({ id }: { id: ProductId }) {
             <Link href="/termos/">Termos de uso</Link>
             <Link href="/privacidade/">Política de privacidade</Link>
           </nav>
+          <a className="btn ghost sm" href={ajudaLink(p.name)} target="_blank" rel="noopener">Falar com o suporte</a>
         </footer>
       </main>
 

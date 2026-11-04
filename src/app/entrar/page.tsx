@@ -5,7 +5,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { errorText, sb } from "@/lib/supabase";
-import { TERMOS_VERSAO } from "@/lib/empresa";
+import { ajudaLink, suporteLink, TERMOS_VERSAO } from "@/lib/empresa";
 import { PRODUCTS } from "@/lib/products";
 import { ErrorBox, Loading, NotConfigured, Notice } from "@/components/ui";
 
@@ -13,7 +13,7 @@ import { ErrorBox, Loading, NotConfigured, Notice } from "@/components/ui";
 
 const safeBack = (v: string | null) => (v && v.startsWith("/") && !v.startsWith("//") ? v : null);
 
-type Step = "checando" | "criar" | "entrar" | "esqueci" | "enviado" | "nova";
+type Step = "checando" | "criar" | "entrar" | "enviado" | "nova";
 
 function Entrar() {
   const router = useRouter();
@@ -51,7 +51,7 @@ function Entrar() {
         setNeedsTerms(!session.user.user_metadata?.termos_versao);
         setStep("nova");
       } else if (session) router.replace(back);
-      else setStep((s) => (s !== "checando" ? s : expiredLink.current ? "esqueci" : "criar"));
+      else setStep((s) => (s !== "checando" ? s : expiredLink.current ? "entrar" : "criar"));
     });
     return () => data.subscription.unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,10 +91,6 @@ function Entrar() {
       } else if (step === "entrar") {
         const { error: failed } = await client!.auth.signInWithPassword({ email: mail(), password });
         if (failed) throw failed;
-      } else if (step === "esqueci") {
-        const { error: failed } = await client!.auth.resetPasswordForEmail(mail(), { redirectTo: `${window.location.origin}/entrar/?nova=1&volta=${encodeURIComponent(back)}` });
-        if (failed) throw failed;
-        setStep("enviado");
       } else if (step === "nova") {
         const { error: failed } = await client!.auth.updateUser({ password, ...(needsTerms ? { data: terms } : {}) });
         if (failed) throw failed;
@@ -107,8 +103,8 @@ function Entrar() {
   if (client === null) return <NotConfigured app={app} />;
   if (step === "checando") return <Loading app={app} />;
 
-  const title = { criar: "Crie sua conta", entrar: "Entre na sua conta", esqueci: "Recupere sua senha", enviado: "Confira seu e-mail", nova: invited ? "Crie sua senha" : "Crie uma senha nova" }[step];
-  const action = { criar: "Criar conta e continuar", entrar: "Entrar", esqueci: "Enviar link", nova: "Salvar senha" } as Record<Step, string>;
+  const title = { criar: "Crie sua conta", entrar: "Entre na sua conta", enviado: "Confira seu e-mail", nova: invited ? "Crie sua senha" : "Crie uma senha nova" }[step];
+  const action = { criar: "Criar conta e continuar", entrar: "Entrar", nova: "Salvar senha" } as Record<Step, string>;
   const wantsPassword = step === "criar" || step === "entrar" || step === "nova";
   const wantsTerms = step === "criar" || (step === "nova" && needsTerms);
 
@@ -130,7 +126,7 @@ function Entrar() {
           )}
           <h2>{title}</h2>
           {invited && step === "nova" && <Notice kind="ok">Pagamento confirmado. Crie sua senha para entrar no app.</Notice>}
-          {expired && step === "esqueci" && <Notice kind="warn">Esse link venceu ou já foi usado. Digite seu e-mail para receber outro.</Notice>}
+          {expired && step === "entrar" && <Notice kind="warn">Esse link venceu ou já foi usado. Fale com o suporte para definir sua senha.</Notice>}
 
           {step === "enviado" ? (
             <>
@@ -161,8 +157,8 @@ function Entrar() {
               )}
               <ErrorBox error={error} />
               <button className="btn pay-btn" disabled={pending}>{pending ? "Aguarde…" : action[step]}</button>
-              {step === "entrar" && <button type="button" className="link-btn" onClick={() => go("esqueci")}>Esqueci minha senha</button>}
-              {step === "esqueci" && <button type="button" className="link-btn" onClick={() => go("entrar")}>Voltar para entrar</button>}
+              {step === "entrar" && <a className="link-btn" href={suporteLink(`Olá! Esqueci minha senha do ${p.name}. Meu e-mail de cadastro é: `)} target="_blank" rel="noopener">Esqueci minha senha</a>}
+              <a className="btn ghost" href={ajudaLink(p.name)} target="_blank" rel="noopener">Falar com o suporte</a>
             </form>
           )}
         </div>

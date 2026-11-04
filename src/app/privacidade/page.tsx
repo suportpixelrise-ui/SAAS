@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { appDoSite, Campo, LegalPage } from "@/components/Legal";
+import { appDoSite, Campo, LegalPage, Suporte } from "@/components/Legal";
 import { PRODUCTS } from "@/lib/products";
 
 export const metadata: Metadata = { title: "Política de privacidade" };
@@ -11,7 +11,7 @@ export default function Privacidade() {
       <p>Esta política explica quais dados pessoais o {p.name} usa, por quê e quais são os seus direitos, de acordo com a Lei Geral de Proteção de Dados (LGPD, Lei 13.709/2018).</p>
 
       <h2>1. Quem cuida dos dados</h2>
-      <p>O responsável é <Campo k="razaoSocial" />, CNPJ <Campo k="cnpj" />, com endereço em <Campo k="endereco" />. Para qualquer assunto de privacidade, o canal é o e-mail <Campo k="email" />.</p>
+      <p>O responsável é <Campo k="razaoSocial" />, CNPJ <Campo k="cnpj" />, com endereço em <Campo k="endereco" />. Para qualquer assunto de privacidade, o canal é o <Suporte />.</p>
 
       <h2>2. Dois papéis diferentes</h2>
       <ul>
@@ -49,7 +49,7 @@ export default function Privacidade() {
         <li><b>Supabase:</b> banco de dados e login. Os dados ficam em servidores em São Paulo.</li>
         <li><b>Netlify:</b> hospedagem do site.</li>
         <li><b>Cakto:</b> pagamento da assinatura.</li>
-        <li><b>Resend:</b> envio dos e-mails do serviço.</li>
+        <li><b>WhatsApp:</b> atendimento do suporte, quando você nos chama por lá.</li>
       </ul>
       <p>Também podemos entregar dados quando uma lei ou uma ordem de autoridade exigir.</p>
       <p>Quando você toca para enviar uma cobrança, o app abre o seu WhatsApp. A partir daí, a conversa segue as regras do WhatsApp.</p>
@@ -76,8 +76,8 @@ export default function Privacidade() {
         <li>a portabilidade dos dados para outro serviço;</li>
         <li>informações sobre com quem compartilhamos.</li>
       </ul>
-      <p>Mande o pedido para <Campo k="email" />. Respondemos em até 15 dias. Você também pode reclamar na ANPD.</p>
-      <p>Se você é cliente de alguém que usa o app, fale primeiro com essa pessoa, porque é ela quem decide sobre seus dados. Se não conseguir, escreva para o mesmo e-mail e encaminharemos o pedido.</p>
+      <p>Mande o pedido pelo <Suporte />. Respondemos em até 15 dias. Você também pode reclamar na ANPD.</p>
+      <p>Se você é cliente de alguém que usa o app, fale primeiro com essa pessoa, porque é ela quem decide sobre seus dados. Se não conseguir, escreva para o mesmo WhatsApp e encaminharemos o pedido.</p>
 
       <h2>10. Cookies e armazenamento no navegador</h2>
       <p>Usamos só o armazenamento do navegador necessário para manter você conectado. Não usamos cookies de publicidade.</p>
