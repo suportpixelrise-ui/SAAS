@@ -1,9 +1,9 @@
 // Preços dos dois apps em centavos. Mantenha igual a src/lib/products.ts.
-// `prices` são as variantes do teste de preço; cada conta cai sempre na mesma (pelo uid).
+// `prices` tem um valor por app. Com mais de um, vira teste de preço: cada conta cai sempre no mesmo (pelo uid).
 
 export const PLANS = {
-  cobranca: { name: "Cobrança", prices: [2990, 4990], yearly: null },
-  sobra: { name: "Sobra", prices: [1490, 2490], yearly: 9700 },
+  cobranca: { name: "Cobrança", prices: [2990], yearly: null },
+  sobra: { name: "Sobra", prices: [1990], yearly: 9700 },
 };
 
 export const GUARANTEE_DAYS = 7;

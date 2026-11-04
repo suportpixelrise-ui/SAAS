@@ -140,7 +140,7 @@ tests/            testes das regras · tests-supabase/ testes da segurança do b
 Os preços dos planos ficam em dois lugares que precisam ser iguais: `src/lib/products.ts` (o que a tela mostra) e `supabase/functions/_shared/plans.js` (o que é cobrado). Um teste confere isso.
 
 ## Decisões provisórias (mudam fácil)
-- **Teste de preço:** cada conta cai sempre no mesmo preço, sorteado a partir do código dela (R$ 29,90 ou R$ 49,90 na Cobrança; R$ 14,90 ou R$ 24,90 no Sobra). O anual do Sobra é R$ 97,00.
+- **Preços:** Cobrança R$ 29,90 por mês. Sobra R$ 19,90 por mês ou R$ 97,00 por ano.
 - **Lembretes:** saem 2 dias antes, no dia e depois do vencimento (repetem a cada 7 dias). O app avisa e a pessoa envia cada um com um toque.
 - **Pagamento dos clientes:** marcado à mão, porque não há integração bancária nesta versão.
 

@@ -165,7 +165,7 @@ function Section({ title, sub, children, id }: { title: ReactNode; sub?: string;
 export function Landing({ id }: { id: ProductId }) {
   const p = PRODUCTS[id];
   const c = COPY[id];
-  const from = brl(Math.min(...p.prices));
+  const price = brl(p.prices[0]);
   return (
     <div className="site night" data-app={id}>
       <div className="wrap nav">
@@ -185,7 +185,7 @@ export function Landing({ id }: { id: ProductId }) {
             <h1 className="lp-h1">{c.h1} <span className="serif">{c.h1b}</span></h1>
             <p className="lp-sub">{c.sub}</p>
             <div className="lp-cta">
-              <Link className="btn" href={p.home}>Assinar por {from}</Link>
+              <Link className="btn" href={p.home}>Assinar por {price}</Link>
               <span className="lp-micro">por mês, com {GUARANTEE_DAYS} dias de garantia.<br />Não gostou? O dinheiro volta.</span>
             </div>
           </div>
@@ -219,8 +219,7 @@ export function Landing({ id }: { id: ProductId }) {
         <Section id="preco" title="Um preço simples">
           <div className="price">
             <div className="stack" style={{ gap: 18 }}>
-              <span className="lead">A partir de</span>
-              <div className="price-n">{from} <small>por mês</small></div>
+              <div className="price-n">{price} <small>por mês</small></div>
               {p.yearlyPrice && <span className="lead">Ou {brl(p.yearlyPrice)} por ano</span>}
               <div className="seal"><i>{GUARANTEE_DAYS}</i><div><b>Dias de garantia</b><span>Pediu no app, o dinheiro volta.</span></div></div>
             </div>
@@ -241,7 +240,7 @@ export function Landing({ id }: { id: ProductId }) {
 
         <section className="final">
           <h2>{c.final}</h2>
-          <Link className="btn light" href={p.home}>Assinar por {from}</Link>
+          <Link className="btn light" href={p.home}>Assinar por {price}</Link>
           <span>{GUARANTEE_DAYS} dias de garantia. Cancele quando quiser.</span>
         </section>
 
@@ -254,7 +253,7 @@ export function Landing({ id }: { id: ProductId }) {
       <span className="wordmark" aria-hidden="true">{p.name}</span>
 
       <div className="sticky-cta">
-        <span>A partir de<b>{from} por mês</b></span>
+        <span>Assinatura<b>{price} por mês</b></span>
         <Link className="btn" href={p.home}>Assinar</Link>
       </div>
     </div>

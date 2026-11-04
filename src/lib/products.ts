@@ -1,5 +1,5 @@
 // Os dois apps da base. Preços em centavos. Mantenha igual a supabase/functions/_shared/plans.js.
-// `prices` são as variantes do teste de preço: cada conta cai sempre na mesma, calculada pelo uid.
+// `prices` tem um valor por app. Com mais de um, vira teste de preço: cada conta cai sempre no mesmo, calculado pelo uid.
 
 export type ProductId = "cobranca" | "sobra";
 
@@ -25,7 +25,7 @@ export const PRODUCTS: Record<ProductId, Product> = {
     audience: "Para personal, professores, pilates, escolinhas e nutricionistas",
     tagline: "Cobre seus alunos e clientes fixos pelo WhatsApp, com Pix, sem constrangimento.",
     home: "/cobranca/",
-    prices: [2990, 4990],
+    prices: [2990],
     benefits: ["Clientes sem limite", "Lembretes de cobrança todo dia", "Painel de quem pagou e quem deve"],
     paywallTitle: ["Receba sem precisar", "ficar lembrando."],
   },
@@ -35,7 +35,7 @@ export const PRODUCTS: Record<ProductId, Product> = {
     audience: "Para confeiteiras, marmiteiras, salgadeiras e artesãs",
     tagline: "Saiba quanto custa cada doce, marmita ou peça e quanto você lucra em cada venda.",
     home: "/sobra/",
-    prices: [1490, 2490],
+    prices: [1990],
     yearlyPrice: 9700,
     benefits: ["Produtos e receitas sem limite", "Aviso quando um insumo ficar mais caro", "Agenda de encomendas com sinal"],
     paywallTitle: ["Saiba quanto você ganha", "em cada venda."],
