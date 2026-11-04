@@ -9,15 +9,18 @@ export { withSuspense } from "@/components/withSuspense";
 
 type Tab = "inicio" | "produtos" | "insumos" | "encomendas";
 
-export function SobShell({ active, children, back, title }: { active?: Tab; children: ReactNode; back?: { href: string; label: string }; title?: string }) {
+export function SobShell({ active, children, back, title, wide }: { active?: Tab; children: ReactNode; back?: { href: string; label: string }; title?: string; wide?: boolean }) {
   const { alerts } = useSob();
   return (
     <AppShell
       app="sobra"
       back={back}
       title={title}
-      tabs={active ? (
+      wide={wide}
+      sub={!active}
+      tabs={
         <TabBar
+          brand={{ name: "Sobra", href: "/sobra/" }}
           active={active}
           items={[
             { key: "inicio", href: "/sobra/", label: "Início", icon: "home", badge: alerts.length },
@@ -26,7 +29,7 @@ export function SobShell({ active, children, back, title }: { active?: Tab; chil
             { key: "encomendas", href: "/sobra/encomendas/", label: "Encomendas", icon: "calendar" },
           ]}
         />
-      ) : undefined}
+      }
     >
       {children}
     </AppShell>

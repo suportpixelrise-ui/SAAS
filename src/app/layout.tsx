@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Instrument_Serif, Mona_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--f-inter", display: "swap" });
-const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--f-jakarta", display: "swap" });
+const mona = Mona_Sans({ subsets: ["latin"], axes: ["wdth"], variable: "--f-mona", display: "swap" });
+const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: "italic", variable: "--f-serif", display: "swap" });
 const APP = process.env.NEXT_PUBLIC_APP === "sobra" ? "Sobra" : process.env.NEXT_PUBLIC_APP === "cobranca" ? "Cobrança" : "Cobrança e Sobra";
 
 export const metadata: Metadata = {
@@ -18,21 +18,19 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F7F7FA" },
-    { media: "(prefers-color-scheme: dark)", color: "#0F0F14" },
+    { media: "(prefers-color-scheme: light)", color: "#F3F3FB" },
+    { media: "(prefers-color-scheme: dark)", color: "#060609" },
   ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${inter.variable} ${jakarta.variable}`}>
+    <html lang="pt-BR" className={`${mona.variable} ${serif.variable}`}>
       <head>
         {/* Endereço e chave pública do Supabase. */}
         <script src="/config.js" />
       </head>
-      <body style={{ ["--font-body" as string]: "var(--f-inter), system-ui, sans-serif", ["--font-display" as string]: "var(--f-jakarta), var(--f-inter), sans-serif" }}>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

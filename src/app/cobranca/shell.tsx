@@ -7,15 +7,18 @@ import { useCob } from "./CobData";
 
 type Tab = "inicio" | "clientes" | "lembretes" | "ajustes";
 
-export function CobShell({ active, children, back, title }: { active?: Tab; children: ReactNode; back?: { href: string; label: string }; title?: string }) {
+export function CobShell({ active, children, back, title, wide }: { active?: Tab; children: ReactNode; back?: { href: string; label: string }; title?: string; wide?: boolean }) {
   const { w, pendingReminders } = useCob();
   return (
     <AppShell
       app="cobranca"
       back={back}
       title={title}
-      tabs={active ? (
+      wide={wide}
+      sub={!active}
+      tabs={
         <TabBar
+          brand={{ name: "Cobrança", href: "/cobranca/" }}
           active={active}
           items={[
             { key: "inicio", href: "/cobranca/", label: "Início", icon: "home" },
@@ -24,7 +27,7 @@ export function CobShell({ active, children, back, title }: { active?: Tab; chil
             { key: "ajustes", href: "/cobranca/ajustes/", label: "Ajustes", icon: "settings" },
           ]}
         />
-      ) : undefined}
+      }
     >
       {children}
     </AppShell>

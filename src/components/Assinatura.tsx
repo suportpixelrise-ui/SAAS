@@ -6,7 +6,7 @@ import { call, errorText, sb } from "@/lib/supabase";
 import { canRefund, hasAccess, useSession } from "@/lib/session";
 import { GUARANTEE_DAYS, PRODUCTS, priceFor, type ProductId } from "@/lib/products";
 import { brl, fullDate } from "@/lib/format";
-import { AppShell, ErrorBox, Notice } from "./ui";
+import { AppShell, ErrorBox, Icon, Notice } from "./ui";
 
 const criar = (data: { product: ProductId; cycle: string; name?: string; cpfCnpj?: string }) => call<{ url?: string; simulated?: boolean }>("assinatura", { acao: "criar", ...data });
 const reembolsar = (data: { product: ProductId }) => call<{ ok: boolean }>("assinatura", { acao: "reembolso", ...data });
@@ -20,7 +20,7 @@ export function Assinatura({ product }: { product: ProductId }) {
   const { user, sub } = useSession();
   const p = PRODUCTS[product];
   const access = hasAccess(sub);
-  const [cycle, setCycle] = useState<"mensal" | "anual">("mensal");
+  const [cycle, setCycle] = useState<"mensal" | "anual">(p.yearlyPrice ? "anual" : "mensal");
   const [name, setName] = useState("");
   const [doc, setDoc] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -106,53 +106,100 @@ export function Assinatura({ product }: { product: ProductId }) {
   // ---------- esperando o pagamento ----------
   if (sub?.status === "pendente") {
     return (
-      <AppShell app={product}>
-        {header("Falta só o pagamento")}
-        <Notice kind="info">Assim que o pagamento for confirmado, o app abre sozinho aqui. No Pix e no cartão leva segundos; no boleto, até 3 dias úteis.</Notice>
-        {sub.invoiceUrl && <a className="btn" href={sub.invoiceUrl}>Abrir o pagamento</a>}
-        <SignOut />
-      </AppShell>
+      <div className="split night" data-app={product}>
+        <Pitch product={product} />
+        <main className="split-form">
+          <div className="in">
+            <Track step={2} />
+            <h2>Falta só o pagamento</h2>
+            <Notice kind="info">Assim que o pagamento for confirmado, o app abre sozinho aqui. No Pix e no cartão leva segundos; no boleto, até 3 dias úteis.</Notice>
+            {sub.invoiceUrl && <a className="btn pay-btn" href={sub.invoiceUrl}>Abrir o pagamento</a>}
+            <SignOut />
+          </div>
+        </main>
+      </div>
     );
   }
 
   // ---------- tela de assinar ----------
+  const price = cycle === "anual" && p.yearlyPrice ? p.yearlyPrice : monthly;
+  const yearlySaving = p.yearlyPrice ? monthly * 12 - p.yearlyPrice : 0;
+  const hasGuarantee = !sub?.guaranteeUsed;
   return (
-    <AppShell app={product}>
-      {header(p.paywallTitle)}
-      {sub?.status === "reembolsada" && <Notice kind="ok">Seu pagamento foi devolvido. Seus dados continuam guardados se quiser voltar.</Notice>}
-      {sub?.status === "cancelada" && <Notice kind="warn">Sua assinatura acabou. Seus dados continuam guardados: é só assinar para voltar.</Notice>}
-      <div className="stack" style={{ gap: 10 }}>
-        {p.benefits.map((b) => <span key={b} className="check">{b}</span>)}
-        {!sub?.guaranteeUsed && <span className="check">Garantia de {GUARANTEE_DAYS} dias: não gostou, pede o dinheiro de volta no app</span>}
-      </div>
+    <div className="split night" data-app={product}>
+      <Pitch product={product} guarantee={hasGuarantee} />
+      <main className="split-form">
+        <form onSubmit={subscribe} className="in">
+          <Track step={2} />
+          <h2>Escolha como pagar</h2>
+          {sub?.status === "reembolsada" && <Notice kind="ok">Seu pagamento foi devolvido. Seus dados continuam guardados se quiser voltar.</Notice>}
+          {sub?.status === "cancelada" && <Notice kind="warn">Sua assinatura acabou. Seus dados continuam guardados: é só assinar para voltar.</Notice>}
 
-      <form onSubmit={subscribe} className="stack" style={{ gap: 14 }}>
-        <div className="choices">
-          <label className="choice">
-            <input type="radio" name="ciclo" checked={cycle === "mensal"} onChange={() => setCycle("mensal")} />
-            <span>{brl(monthly)} por mês<small>Cancele quando quiser</small></span>
-          </label>
-          {p.yearlyPrice && (
-            <label className="choice">
-              <input type="radio" name="ciclo" checked={cycle === "anual"} onChange={() => setCycle("anual")} />
-              <span>{brl(p.yearlyPrice)} por ano<small>Sai {brl(Math.round(p.yearlyPrice / 12))} por mês</small></span>
+          <div className="stack" style={{ gap: 8 }}>
+            {p.yearlyPrice && (
+              <label className="plan-opt">
+                <input type="radio" name="ciclo" checked={cycle === "anual"} onChange={() => setCycle("anual")} />
+                <span>
+                  <i className="dot" />
+                  <span><b>Anual {yearlySaving > 0 && <em className="save" style={{ fontStyle: "normal" }}>economize {brl(yearlySaving)}</em>}</b><small>Sai {brl(Math.round(p.yearlyPrice / 12))} por mês</small></span>
+                  <span className="val">{brl(p.yearlyPrice)}</span>
+                </span>
+              </label>
+            )}
+            <label className="plan-opt">
+              <input type="radio" name="ciclo" checked={cycle === "mensal"} onChange={() => setCycle("mensal")} />
+              <span>
+                <i className="dot" />
+                <span><b>Mensal</b><small>Cancele quando quiser</small></span>
+                <span className="val">{brl(monthly)}</span>
+              </span>
             </label>
+          </div>
+
+          {simulated ? (
+            <Notice kind="info">Modo de teste: o pagamento é simulado e a assinatura ativa na hora.</Notice>
+          ) : (
+            <>
+              <label className="field"><span>Nome completo</span><input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" required /></label>
+              <label className="field"><span>CPF ou CNPJ</span><input value={doc} onChange={(e) => setDoc(e.target.value)} inputMode="numeric" required /><small>Necessário para gerar a cobrança.</small></label>
+            </>
           )}
-        </div>
-        {simulated ? (
-          <Notice kind="info">Modo de teste: o pagamento é simulado e a assinatura ativa na hora.</Notice>
-        ) : (
-          <>
-            <label className="field"><span>Nome completo</span><input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" required /></label>
-            <label className="field"><span>CPF ou CNPJ</span><input value={doc} onChange={(e) => setDoc(e.target.value)} inputMode="numeric" required /><small>Pedido pelo Asaas para emitir a cobrança da assinatura.</small></label>
-          </>
-        )}
-        <ErrorBox error={error} />
-        <button className="btn" disabled={!!pending}>{pending ? "Abrindo…" : simulated ? "Assinar (pagamento simulado)" : "Assinar com Pix, boleto ou cartão"}</button>
-      </form>
-      <p className="muted small" style={{ textAlign: "center" }}>A cobrança é feita agora. Preço travado por 12 meses. Cancele quando quiser, direto no app.</p>
-      <SignOut />
-    </AppShell>
+
+          <div className="total"><span className="muted">Você paga hoje</span><b>{brl(price)}</b></div>
+          <ErrorBox error={error} />
+          <button className="btn pay-btn" disabled={!!pending}>{pending ? "Abrindo o pagamento…" : simulated ? "Assinar (pagamento simulado)" : `Assinar por ${brl(price)}`}</button>
+          <div className="trust">
+            <span><Icon name="check" size={16} /> Pague com Pix, boleto ou cartão, em ambiente seguro do Asaas</span>
+            <span><Icon name="check" size={16} /> Preço travado por 12 meses</span>
+            {hasGuarantee && <span><Icon name="check" size={16} /> {GUARANTEE_DAYS} dias para pedir o dinheiro de volta no app</span>}
+          </div>
+          <SignOut />
+        </form>
+      </main>
+    </div>
+  );
+}
+
+function Track({ step }: { step: number }) {
+  const items = ["Conta criada", "Pagamento", "Usar o app"];
+  return (
+    <ol className="track" aria-label={`Passo ${step} de ${items.length}`}>
+      {items.map((t, i) => (
+        <li key={t} className={i + 1 < step ? "done" : i + 1 === step ? "on" : ""}><i>{i + 1 < step ? "✓" : i + 1}</i>{t}</li>
+      ))}
+    </ol>
+  );
+}
+
+function Pitch({ product, guarantee = true }: { product: ProductId; guarantee?: boolean }) {
+  const p = PRODUCTS[product];
+  return (
+    <aside className="split-pitch">
+      <a className="brandmark" href="/">{p.name}</a>
+      <h1>{p.paywallTitle[0]} <span className="serif">{p.paywallTitle[1]}</span></h1>
+      <div className="stack">{p.benefits.map((b) => <span key={b} className="check">{b}</span>)}</div>
+      {guarantee && <div className="seal"><i>{GUARANTEE_DAYS}</i><div><b>Dias de garantia</b><span>Não gostou? Peça o dinheiro de volta no próprio app.</span></div></div>}
+    </aside>
   );
 }
 

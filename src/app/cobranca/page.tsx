@@ -20,7 +20,7 @@ function Inicio() {
   const pct = s.total ? Math.round((s.paid / s.total) * 100) : 0;
 
   return (
-    <CobShell active="inicio">
+    <CobShell active="inicio" wide>
       {qs.get("assinou") && <Notice kind="ok">Assinatura ativa. Obrigado por assinar!</Notice>}
       <div className="row between">
         <span className="muted">Olá, {profile!.displayName.split(" ")[0]}</span>
@@ -35,17 +35,19 @@ function Inicio() {
         <Empty icon="users" title={`Cadastre seu primeiro ${w.one}`} text="Nome, WhatsApp, valor e vencimento. Leva um minuto e você já pode mandar a primeira cobrança." action={<Link className="btn" href="/cobranca/clientes/novo/">Cadastrar {w.one}</Link>} />
       ) : (
         <>
-          <section className="hero" aria-label="Resumo do mês">
-            <span className="label">Falta receber</span>
-            <span className="big">{brl(s.open)}</span>
-            <span className="muted">Entrou {brl(s.paid)} de {brl(s.total)}</span>
-            <div className="bar" role="img" aria-label={`${pct}% recebido`}><i style={{ width: `${pct}%` }} /></div>
-          </section>
+          <div className="dash">
+            <section className="hero" aria-label="Resumo do mês">
+              <span className="label">Falta receber</span>
+              <span className="big">{brl(s.open)}</span>
+              <span className="muted">Entrou {brl(s.paid)} de {brl(s.total)}</span>
+              <div className="bar" role="img" aria-label={`${pct}% recebido`}><i style={{ width: `${pct}%` }} /></div>
+            </section>
 
-          <div className="pills">
-            <span className="pill ok">{s.paidClients} {s.paidClients === 1 ? "pagou" : "pagaram"}</span>
-            <span className="pill bad">{s.owingClients} {s.owingClients === 1 ? "deve" : "devem"}</span>
-            {isCurrent && <span className="pill warn">{s.dueToday} {s.dueToday === 1 ? "vence" : "vencem"} hoje</span>}
+            <div className="stats">
+              <div className="stat ok"><span>{s.paidClients === 1 ? "Pagou" : "Pagaram"}</span><b>{s.paidClients}</b></div>
+              <div className="stat bad"><span>{s.owingClients === 1 ? "Deve" : "Devem"}</span><b>{s.owingClients}</b></div>
+              {isCurrent && <div className="stat warn"><span>{s.dueToday === 1 ? "Vence hoje" : "Vencem hoje"}</span><b>{s.dueToday}</b></div>}
+            </div>
           </div>
 
           {isCurrent && (

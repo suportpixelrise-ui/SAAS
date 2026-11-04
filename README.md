@@ -13,9 +13,10 @@ Cada app é um **site estático** separado no Netlify, publicado a partir do Git
 GitHub (repositório SAAS) ──> Netlify publica sozinho a cada atualização (2 sites)
 
 Navegador (site estático no Netlify)
-  ├─ Supabase Auth ........ login por link mágico no e-mail
+  ├─ Supabase Auth ........ login com e-mail e senha
   ├─ Banco (Postgres) ..... tabelas cob_* e sob_*, cada linha com o dono
   │                         (as regras só liberam o dono e com assinatura válida)
+  ├─ Edge Function admin ........ lista de assinantes (só para o dono)
   └─ Edge Function assinatura ... criar · reembolso · cancelar
                                     └─ Asaas (Pix, boleto e cartão)
 Asaas ──webhook──> Edge Function asaas-webhook ──> libera ou corta o acesso
@@ -40,8 +41,9 @@ As tabelas, as regras e as duas funções ficam em `supabase/`. O que falta é f
    Já está feito. Se trocar o endereço de um site, atualize aqui.
 
    Sem isso, o link do e-mail não volta para o site certo.
-2. **E-mail de login:** em **Authentication › Emails › SMTP Settings**, cadastre um serviço de e-mail próprio (Resend, Brevo, SendGrid ou outro). O e-mail que vem pronto no Supabase é só para teste e tem um limite bem baixo por hora. **Sem isso, seus clientes não conseguem entrar.**
-3. **Plano:** o plano gratuito pausa o projeto depois de 7 dias sem uso. Passe para o Pro quando tiver clientes de verdade.
+2. **Login com senha:** em **Authentication › Sign In / Providers › Email**, deixe **Confirm email** desligado. Assim a conta entra na hora, sem depender de e-mail.
+3. **E-mail de "esqueci minha senha":** em **Authentication › Emails › SMTP Settings**, cadastre um serviço de e-mail próprio (Resend, Brevo, SendGrid ou outro). O e-mail que vem pronto no Supabase tem um limite bem baixo por hora.
+4. **Plano:** o plano gratuito pausa o projeto depois de 7 dias sem uso. Passe para o Pro quando tiver clientes de verdade.
 
 ### 2. Asaas
 
@@ -88,6 +90,12 @@ A mesma conta funciona nos dois sites, mas a pessoa entra uma vez em cada um, po
 
 ---
 
+## Tela de administrador
+
+Abra `/admin/` em qualquer um dos sites, com a sua conta. Ela mostra quem assinou, a situação e quanto entra por mês. Só abre para contas da tabela `admins`, e não mostra os clientes nem os produtos de cada assinante.
+
+---
+
 ## Rodar no seu computador
 
 Precisa do Node 24 ou mais novo.
@@ -121,10 +129,10 @@ npm run test:regras
 src/lib/          regras sem tela (testadas): cobranca-core, sobra-core, sobra-calc, pix, format, whatsapp, products
 src/lib/db.ts     leitura e gravação no banco; *-data são as gravações de cada app
 src/lib/supabase  lê o config.js e chama as funções
-src/app/          telas (todas no navegador). cobranca/ e sobra/ têm a "porta" de login e assinatura no layout
+src/app/          telas (todas no navegador). Landing.tsx é a página de venda; cobranca/ e sobra/ têm a "porta" de login e assinatura no layout
 src/components/   Assinatura (assinar, garantia e cancelar), AccessGate, componentes visuais
 supabase/migrations/  tabelas e regras de segurança
-supabase/functions/   assinatura, asaas-webhook e _shared/plans.js (preços, igual a products.ts)
+supabase/functions/   assinatura, asaas-webhook, admin e _shared/plans.js (preços, igual a products.ts)
 scripts/          site.mjs (gera o site de um app) e servir.mjs (testa o site gerado)
 tests/            testes das regras · tests-supabase/ testes da segurança do banco
 ```

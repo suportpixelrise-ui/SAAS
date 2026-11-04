@@ -1,4 +1,4 @@
-// Os dois apps da base. Preços em centavos. Mantenha igual a functions/plans.js.
+// Os dois apps da base. Preços em centavos. Mantenha igual a supabase/functions/_shared/plans.js.
 // `prices` são as variantes do teste de preço: cada conta cai sempre na mesma, calculada pelo uid.
 
 export type ProductId = "cobranca" | "sobra";
@@ -12,7 +12,8 @@ export interface Product {
   prices: number[];
   yearlyPrice?: number;
   benefits: string[];
-  paywallTitle: string;
+  /** Título em duas partes: a segunda sai na fonte de destaque. */
+  paywallTitle: [string, string];
 }
 
 export const GUARANTEE_DAYS = 7;
@@ -26,7 +27,7 @@ export const PRODUCTS: Record<ProductId, Product> = {
     home: "/cobranca/",
     prices: [2990, 4990],
     benefits: ["Clientes sem limite", "Lembretes de cobrança todo dia", "Painel de quem pagou e quem deve"],
-    paywallTitle: "Receba sem precisar ficar lembrando",
+    paywallTitle: ["Receba sem precisar", "ficar lembrando."],
   },
   sobra: {
     id: "sobra",
@@ -37,7 +38,7 @@ export const PRODUCTS: Record<ProductId, Product> = {
     prices: [1490, 2490],
     yearlyPrice: 9700,
     benefits: ["Produtos e receitas sem limite", "Aviso quando um insumo ficar mais caro", "Agenda de encomendas com sinal"],
-    paywallTitle: "Saiba quanto você ganha em cada venda",
+    paywallTitle: ["Saiba quanto você ganha", "em cada venda."],
   },
 };
 

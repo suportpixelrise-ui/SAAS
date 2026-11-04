@@ -63,6 +63,9 @@ export function errorText(err: unknown): string {
   const message = e?.message ?? "";
   if (code === "42501") return message.startsWith("new row") || message.startsWith("permission") ? "Sem permissão. Confira se a sua assinatura está ativa." : message;
   if (code === "over_email_send_rate_limit" || e?.status === 429) return "Muitos pedidos seguidos. Espere um minuto e tente de novo.";
+  if (code === "invalid_credentials") return "E-mail ou senha errados.";
+  if (code === "user_already_exists") return "Esse e-mail já tem conta. Toque em Já tenho conta para entrar.";
+  if (code === "weak_password") return "Essa senha é fraca. Use pelo menos 8 caracteres.";
   if (code === "validation_failed" || code === "email_address_invalid") return "Confira o e-mail. Ele parece incompleto.";
   if (message.includes("Failed to fetch") || message.includes("Failed to send")) return "Sem conexão. Confira a internet e tente de novo.";
   return message || "Algo deu errado. Tente de novo.";

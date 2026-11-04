@@ -4,10 +4,13 @@ import type { ProductId } from "@/lib/products";
 
 // Componentes compartilhados pelos dois apps. Só a cor de destaque muda (data-app).
 
-export function AppShell({ app, children, tabs, back, title, right }: {
+export function AppShell({ app, children, tabs, sub, wide, back, title, right }: {
   app: ProductId;
   children: ReactNode;
   tabs?: ReactNode;
+  /** Tela interna: o menu aparece só no computador. */
+  sub?: boolean;
+  wide?: boolean;
   back?: { href: string; label: string };
   title?: string;
   right?: ReactNode;
@@ -24,7 +27,7 @@ export function AppShell({ app, children, tabs, back, title, right }: {
           {right}
         </header>
       )}
-      <main className={tabs ? "content" : "content no-tabs"}>
+      <main className={`content ${tabs && !sub ? "" : "no-tabs"} ${wide ? "wide" : ""}`}>
         {title && <h1 className="page-title">{title}</h1>}
         {children}
       </main>
@@ -33,9 +36,10 @@ export function AppShell({ app, children, tabs, back, title, right }: {
   );
 }
 
-export function TabBar({ items, active }: { items: { href: string; label: string; icon: IconName; key: string; badge?: number }[]; active: string }) {
+export function TabBar({ brand, items, active }: { brand: { name: string; href: string }; items: { href: string; label: string; icon: IconName; key: string; badge?: number }[]; active?: string }) {
   return (
-    <div className="tabs">
+    <div className={active ? "tabs" : "tabs sub"}>
+      <Link className="side-brand" href={brand.href}>{brand.name}</Link>
       <nav aria-label="Menu principal">
         {items.map((t) => (
           <Link key={t.key} href={t.href} aria-current={t.key === active ? "page" : undefined}>
@@ -89,7 +93,7 @@ export function Loading({ app }: { app: ProductId }) {
       <main className="content no-tabs" style={{ paddingTop: 40 }}>
         <div className="skeleton" style={{ width: 120, height: 14 }} />
         <div className="skeleton" style={{ width: 240, height: 44 }} />
-        <div className="skeleton" style={{ height: 160, borderRadius: 20 }} />
+        <div className="skeleton" style={{ height: 180, borderRadius: 28 }} />
         <span className="sr-only">Carregando…</span>
       </main>
     </div>
