@@ -1,9 +1,15 @@
 project_id = "jjobijwytjwxfbyjejma"
 
-# As duas funções conferem quem chamou no próprio código: "assinatura" pelo login da pessoa,
-# "asaas-webhook" pelo token do Asaas.
+# As funções conferem quem chamou no próprio código: "assinatura" e "admin" pelo login da pessoa,
+# "asaas-webhook" pelo token do Asaas e "cakto-webhook" pela assinatura do aviso.
 [functions.assinatura]
 verify_jwt = false
 
+[functions.admin]
+verify_jwt = false
+
 [functions.asaas-webhook]
+verify_jwt = false
+
+[functions.cakto-webhook]
 verify_jwt = false

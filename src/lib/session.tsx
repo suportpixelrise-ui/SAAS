@@ -37,7 +37,7 @@ export function useUser() {
   return state;
 }
 
-/** Acompanha a assinatura: muda sozinha quando o Asaas confirma o pagamento. */
+/** Acompanha a assinatura: muda sozinha quando o pagamento é confirmado. */
 export function useSubscription(uid: string | undefined, product: ProductId) {
   const [state, setState] = useState<{ loading: boolean; sub: Subscription | null }>({ loading: true, sub: null });
   useEffect(() => {

@@ -47,7 +47,7 @@ export default function Admin() {
   if (error) return <div className="admin"><h1 className="page-title">Administrador</h1><Notice kind="bad">{error}</Notice><Link className="btn ghost fit" href="/">Voltar</Link></div>;
   if (!data) return <Loading app="cobranca" />;
 
-  const paying = data.assinaturas.filter((r) => r.status === "ativa" && r.provider === "asaas");
+  const paying = data.assinaturas.filter((r) => r.status === "ativa" && r.provider !== "simulado");
   const mrr = paying.reduce((s, r) => s + monthly(r), 0);
   const byApp = (id: ProductId) => paying.filter((r) => r.product === id).length;
   const lost = data.assinaturas.filter((r) => r.status === "cancelada" || r.status === "reembolsada").length;

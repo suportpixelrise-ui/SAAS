@@ -1,10 +1,11 @@
 // Tudo o que a pessoa pede sobre a própria assinatura. O campo "acao" diz o quê:
-// - criar: cria o cliente e a assinatura no Asaas e devolve o link de pagamento.
+// - criar: devolve o link de pagamento. Com oferta da Cakto no plano, é o checkout dela; sem oferta, cria no Asaas.
 // - reembolso: garantia de 7 dias, devolve o primeiro pagamento e encerra a assinatura.
 // - cancelar: para as próximas cobranças; o acesso vai até o fim do período pago.
-// Sem chave do Asaas e com payment_settings.simulado ligado, o pagamento e o reembolso são simulados.
+// Sem chave do Asaas e com payment_settings.simulado ligado, o pagamento e o reembolso são simulados (planos sem oferta da Cakto).
 
 import { admin, Aviso, CORS, DAY, iso, json } from "../_shared/nucleo.ts";
+import { cancelarAssinatura, caktoPronta, devolverPedido } from "../_shared/cakto.ts";
 import { GRACE_DAYS, GUARANTEE_DAYS, PLANS, priceFor } from "../_shared/plans.js";
 
 const ASAAS_API_KEY = Deno.env.get("ASAAS_API_KEY") ?? "";
@@ -65,6 +66,19 @@ async function criar(who: Who, product: string, body: Body) {
     guarantee_used: Boolean(current?.guarantee_used || current?.refunded_at),
     refunded_at: null, canceled_at: null,
   };
+
+  const oferta = PLANS[product].checkout;
+  if (oferta) {
+    if (!caktoPronta) throw new Aviso("O pagamento ainda não está configurado.");
+    const token = current?.checkout_token ?? crypto.randomUUID();
+    const url = `https://pay.cakto.com.br/${oferta}?callback=${token}`;
+    await gravar({
+      ...base, status: "pendente", provider: "cakto", checkout_token: token, invoice_url: url,
+      asaas_subscription_id: null, cakto_subscription_id: null,
+      access_until: iso(0), current_period_end: null, paid_at: null, refundable_until: null, first_payment_id: null, last_payment_id: null,
+    });
+    return { url };
+  }
 
   const m = await modo();
   if (m === "desligado") throw new Aviso("O pagamento ainda não está configurado.");
@@ -127,7 +141,14 @@ async function reembolso({ uid }: Who, product: string) {
   if (Date.parse(sub.refundable_until) < Date.now()) throw new Aviso(`O prazo de ${GUARANTEE_DAYS} dias da garantia já passou.`);
 
   const m = await modo();
-  if (sub.provider === "asaas") {
+  if (sub.provider === "cakto") {
+    await devolverPedido(sub.first_payment_id);
+    if (sub.cakto_subscription_id) {
+      await cancelarAssinatura(sub.cakto_subscription_id).catch((err) => console.error("Falha ao cancelar depois da devolução", err));
+    } else {
+      console.error(`Devolução sem id da assinatura na Cakto: ${uid}`);
+    }
+  } else if (sub.provider === "asaas") {
     if (m !== "asaas") throw new Aviso("O pagamento não está configurado.");
     await asaas(`/payments/${sub.first_payment_id}/refund`, { method: "POST", body: JSON.stringify({ description: "Garantia de 7 dias" }) });
     await asaas(`/subscriptions/${sub.asaas_subscription_id}`, { method: "DELETE" }).catch(() => null);
@@ -142,6 +163,11 @@ async function reembolso({ uid }: Who, product: string) {
 async function cancelar({ uid }: Who, product: string) {
   const sub = await lerAssinatura(uid, product);
   if (!sub || !["ativa", "pendente"].includes(sub.status)) throw new Aviso("Não há assinatura ativa.");
+  if (sub.provider === "cakto" && sub.status === "ativa") {
+    // Sem o id, a cobrança seguiria na Cakto: melhor avisar do que dizer que cancelou.
+    if (!sub.cakto_subscription_id) throw new Aviso("Não conseguimos cancelar agora. Fale com o suporte.", 502);
+    await cancelarAssinatura(sub.cakto_subscription_id);
+  }
   if (sub.provider === "asaas" && sub.asaas_subscription_id && (await modo()) === "asaas") {
     await asaas(`/subscriptions/${sub.asaas_subscription_id}`, { method: "DELETE" });
   }

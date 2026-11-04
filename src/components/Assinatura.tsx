@@ -26,7 +26,8 @@ export function Assinatura({ product }: { product: ProductId }) {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState<string | null>(null);
   const [confirmRefund, setConfirmRefund] = useState(false);
-  const simulated = Boolean(window.APP_CONFIG?.pagamentoSimulado);
+  const externo = Boolean(p.checkoutExterno);
+  const simulated = Boolean(window.APP_CONFIG?.pagamentoSimulado) && !externo;
   const monthly = priceFor(user.uid, product, "mensal");
 
   // Quando o pagamento é confirmado, a assinatura muda sozinha e a pessoa vai para o app.
@@ -48,12 +49,15 @@ export function Assinatura({ product }: { product: ProductId }) {
     }
   }
 
-  async function subscribe(e: React.FormEvent) {
+  const pagar = () => run("assinar", async () => {
+    const semDados = simulated || externo;
+    const res = await criar({ product, cycle, name: semDados ? undefined : name, cpfCnpj: semDados ? undefined : doc });
+    if (res.url) window.location.href = res.url;
+  });
+
+  function subscribe(e: React.FormEvent) {
     e.preventDefault();
-    await run("assinar", async () => {
-      const res = await criar({ product, cycle, name: simulated ? undefined : name, cpfCnpj: simulated ? undefined : doc });
-      if (res.url) window.location.href = res.url;
-    });
+    pagar();
   }
 
   const header = (title: string) => (
@@ -112,8 +116,13 @@ export function Assinatura({ product }: { product: ProductId }) {
           <div className="in">
             <Track step={2} />
             <h2>Falta só o pagamento</h2>
-            <Notice kind="info">Assim que o pagamento for confirmado, o app abre sozinho aqui. No Pix e no cartão leva segundos; no boleto, até 3 dias úteis.</Notice>
-            {sub.invoiceUrl && <a className="btn pay-btn" href={sub.invoiceUrl}>Abrir o pagamento</a>}
+            <Notice kind="info">{externo ? "Depois de pagar, volte para esta tela: o app abre sozinho. No Pix e no cartão leva segundos." : "Assim que o pagamento for confirmado, o app abre sozinho aqui. No Pix e no cartão leva segundos; no boleto, até 3 dias úteis."}</Notice>
+            <ErrorBox error={error} />
+            {externo ? (
+              <button className="btn pay-btn" disabled={!!pending} onClick={pagar}>{pending ? "Abrindo o pagamento…" : "Abrir o pagamento"}</button>
+            ) : (
+              sub.invoiceUrl && <a className="btn pay-btn" href={sub.invoiceUrl}>Abrir o pagamento</a>
+            )}
             <SignOut />
           </div>
         </main>
@@ -131,7 +140,7 @@ export function Assinatura({ product }: { product: ProductId }) {
       <main className="split-form">
         <form onSubmit={subscribe} className="in">
           <Track step={2} />
-          <h2>Escolha como pagar</h2>
+          <h2>{externo ? "Falta só o pagamento" : "Escolha como pagar"}</h2>
           {sub?.status === "reembolsada" && <Notice kind="ok">Seu pagamento foi devolvido. Seus dados continuam guardados se quiser voltar.</Notice>}
           {sub?.status === "cancelada" && <Notice kind="warn">Sua assinatura acabou. Seus dados continuam guardados: é só assinar para voltar.</Notice>}
 
@@ -158,7 +167,7 @@ export function Assinatura({ product }: { product: ProductId }) {
 
           {simulated ? (
             <Notice kind="info">Modo de teste: o pagamento é simulado e a assinatura ativa na hora.</Notice>
-          ) : (
+          ) : !externo && (
             <>
               <label className="field"><span>Nome completo</span><input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" required /></label>
               <label className="field"><span>CPF ou CNPJ</span><input value={doc} onChange={(e) => setDoc(e.target.value)} inputMode="numeric" required /><small>Necessário para gerar a cobrança.</small></label>
@@ -169,7 +178,7 @@ export function Assinatura({ product }: { product: ProductId }) {
           <ErrorBox error={error} />
           <button className="btn pay-btn" disabled={!!pending}>{pending ? "Abrindo o pagamento…" : simulated ? "Assinar (pagamento simulado)" : `Assinar por ${brl(price)}`}</button>
           <div className="trust">
-            <span><Icon name="check" size={16} /> Pague com Pix, boleto ou cartão, em ambiente seguro do Asaas</span>
+            <span><Icon name="check" size={16} /> {externo ? "Pague com Pix ou cartão, em ambiente seguro da Cakto" : "Pague com Pix, boleto ou cartão, em ambiente seguro do Asaas"}</span>
             <span><Icon name="check" size={16} /> Preço travado por 12 meses</span>
             {hasGuarantee && <span><Icon name="check" size={16} /> {GUARANTEE_DAYS} dias para pedir o dinheiro de volta no app</span>}
           </div>
@@ -205,5 +214,5 @@ function Pitch({ product, guarantee = true }: { product: ProductId; guarantee?: 
 
 function SignOut() {
   const router = useRouter();
-  return <button className="link-btn" style={{ alignSelf: "center" }} onClick={async () => { await sb()!.auth.signOut(); router.replace("/"); }}>Sair da conta</button>;
+  return <button type="button" className="link-btn" style={{ alignSelf: "center" }} onClick={async () => { await sb()!.auth.signOut(); router.replace("/"); }}>Sair da conta</button>;
 }

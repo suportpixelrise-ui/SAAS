@@ -11,7 +11,7 @@ export default function ComecarPage() {
   return (
     <AppShell app="cobranca">
       <div className="stack" style={{ gap: 6, paddingTop: 20 }}>
-        <span className="label">Cobrança</span>
+        <span className="label">Facilita IA</span>
         <h1 className="page-title">Vamos deixar tudo pronto</h1>
         <p className="lead">São 3 perguntas rápidas. Depois você cadastra o primeiro cliente e já pode cobrar.</p>
       </div>

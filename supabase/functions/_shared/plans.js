@@ -2,7 +2,8 @@
 // `prices` tem um valor por app. Com mais de um, vira teste de preço: cada conta cai sempre no mesmo (pelo uid).
 
 export const PLANS = {
-  cobranca: { name: "Cobrança", prices: [2999], yearly: null },
+  // `checkout` é a oferta da Cakto. Na Cakto o produto custa R$ 0,99 a menos: ela soma a taxa ao comprador.
+  cobranca: { name: "Cobrança", prices: [2999], yearly: null, checkout: "3a8bf5i_1280313" },
   sobra: { name: "Sobra", prices: [1999], yearly: 9700 },
 };
 

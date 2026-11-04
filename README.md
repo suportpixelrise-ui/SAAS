@@ -18,13 +18,15 @@ Navegador (site estático no Netlify)
   │                         (as regras só liberam o dono e com assinatura válida)
   ├─ Edge Function admin ........ lista de assinantes (só para o dono)
   └─ Edge Function assinatura ... criar · reembolso · cancelar
-                                    └─ Asaas (Pix, boleto e cartão)
+                                    ├─ Cakto (Cobrança: checkout dela, Pix e cartão)
+                                    └─ Asaas (Sobra, pausado, em ambiente de teste)
+Cakto ──webhook──> Edge Function cakto-webhook ──> libera ou corta o acesso
 Asaas ──webhook──> Edge Function asaas-webhook ──> libera ou corta o acesso
 ```
 
-**Assinatura:** é cobrada na hora, sem teste grátis, com **garantia de 7 dias**. Dentro desse prazo, a pessoa pede o reembolso no próprio app: a função devolve o primeiro pagamento pelo Asaas e encerra a assinatura. A garantia vale uma vez por pessoa em cada app.
+**Assinatura:** é cobrada na hora, sem teste grátis, com **garantia de 7 dias**. Dentro desse prazo, a pessoa pede o reembolso no próprio app: a função devolve o primeiro pagamento e encerra a assinatura. A garantia vale uma vez por pessoa em cada app.
 
-**Chaves:** o endereço do projeto e a chave pública (`sb_publishable_...`) ficam em `public/config.js` e podem ficar visíveis, porque quem protege os dados são as regras do banco. A chave secreta do Supabase e as chaves do Asaas ficam só nos segredos das Edge Functions e nunca vão para o GitHub.
+**Chaves:** o endereço do projeto e a chave pública (`sb_publishable_...`) ficam em `public/config.js` e podem ficar visíveis, porque quem protege os dados são as regras do banco. A chave secreta do Supabase e as chaves da Cakto e do Asaas ficam só nos segredos das Edge Functions e nunca vão para o GitHub.
 
 ---
 
@@ -45,7 +47,28 @@ As tabelas, as regras e as duas funções ficam em `supabase/`. O que falta é f
 3. **E-mail de "esqueci minha senha":** em **Authentication › Emails › SMTP Settings**, cadastre um serviço de e-mail próprio (Resend, Brevo, SendGrid ou outro). O e-mail que vem pronto no Supabase tem um limite bem baixo por hora.
 4. **Plano:** o plano gratuito pausa o projeto depois de 7 dias sem uso. Passe para o Pro quando tiver clientes de verdade.
 
-### 2. Asaas
+### 2. Cakto (Cobrança)
+
+O botão de assinar leva para a oferta que está em `checkout`, no arquivo `supabase/functions/_shared/plans.js`. O link leva um código sem dado pessoal (`?callback=`), e o aviso de pagamento devolve esse código. É assim que a compra encontra a conta, mesmo que a pessoa use outro e-mail no checkout.
+
+1. **Chave da API:** em **Integrações › Cakto API**, crie uma chave com as permissões `read`, `write`, `orders`, `subscriptions` e `webhooks`. Nunca marque as de saque.
+2. **Webhook:** em https://app.cakto.com.br/dashboard/apps, crie um com:
+   - URL: `https://jjobijwytjwxfbyjejma.supabase.co/functions/v1/cakto-webhook`;
+   - produto: Cobrança;
+   - eventos: `purchase_approved`, `refund`, `chargeback`, `subscription_created`, `subscription_renewed`, `subscription_late_recovered` e `subscription_canceled`.
+3. **Segredos:** no Supabase, em **Edge Functions › Secrets**:
+
+   | Nome | Valor |
+   |---|---|
+   | `CAKTO_CLIENT_ID` | o Client ID da chave |
+   | `CAKTO_CLIENT_SECRET` | o Client Secret da chave |
+   | `CAKTO_WEBHOOK_SECRET` | o segredo do webhook |
+
+Enquanto faltar um dos três, o site avisa que o pagamento não está configurado e não manda ninguém para o checkout. Assim, ninguém paga sem receber o acesso.
+
+**Conferir na primeira compra real:** a documentação não mostra o nome do campo com o id da assinatura nos avisos nem diz se o `callback` se repete nas renovações. O `cakto-webhook` grava no log só os nomes dos campos de cada aviso, para conferir. Veja se `cakto_subscription_id` foi preenchido na tabela `subscriptions`: sem ele, o cancelamento pelo app avisa para falar com o suporte.
+
+### 3. Asaas (Sobra, pausado)
 
 1. Crie a conta. Comece pelo **sandbox** (https://sandbox.asaas.com), que é o ambiente de teste e não cobra de verdade.
 2. **Chave da API:** em **Integrações › Chaves de API**, gere uma chave.
@@ -66,7 +89,7 @@ As tabelas, as regras e as duas funções ficam em `supabase/`. O que falta é f
    - os campos usados em `supabase/functions/assinatura/index.ts`;
    - como funciona o estorno de **boleto**. No Pix e no cartão, a devolução é automática.
 
-### 3. GitHub e Netlify (um site para cada app)
+### 4. GitHub e Netlify (um site para cada app)
 
 O código deste app fica no repositório **SAAS** do GitHub (só a pasta `plataforma`). Faça isto duas vezes, uma para cada app:
 
@@ -106,7 +129,7 @@ npm run dev
 
 Abra http://localhost:3000. O site usa o mesmo projeto do Supabase que está no ar, então o que você grava aqui aparece lá.
 
-**Pagamento simulado (só para testar sem o Asaas):**
+**Pagamento simulado (só no Sobra, que não usa a Cakto):**
 - ligue `simulado` na tabela `payment_settings`, no painel do Supabase;
 - coloque `pagamentoSimulado: true` em `public/config.js`.
 
@@ -132,7 +155,7 @@ src/lib/supabase  lê o config.js e chama as funções
 src/app/          telas (todas no navegador). Landing.tsx é a página de venda; cobranca/ e sobra/ têm a "porta" de login e assinatura no layout
 src/components/   Assinatura (assinar, garantia e cancelar), AccessGate, componentes visuais
 supabase/migrations/  tabelas e regras de segurança
-supabase/functions/   assinatura, asaas-webhook, admin e _shared/plans.js (preços, igual a products.ts)
+supabase/functions/   assinatura, cakto-webhook, asaas-webhook, admin, _shared/plans.js (preços, igual a products.ts) e _shared/cakto-regras.js (regras dos avisos, testadas)
 scripts/          site.mjs (gera o site de um app) e servir.mjs (testa o site gerado)
 tests/            testes das regras · tests-supabase/ testes da segurança do banco
 ```

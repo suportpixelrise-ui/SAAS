@@ -18,7 +18,7 @@ export function CobShell({ active, children, back, title, wide }: { active?: Tab
       sub={!active}
       tabs={
         <TabBar
-          brand={{ name: "Cobrança", href: "/cobranca/" }}
+          brand={{ name: "Facilita IA", href: "/cobranca/" }}
           active={active}
           items={[
             { key: "inicio", href: "/cobranca/", label: "Início", icon: "home" },

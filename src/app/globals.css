@@ -403,7 +403,7 @@ form { margin: 0; }
 .final .btn { width: auto; font-size: 17px; min-height: 60px; padding: 0 34px; }
 
 .foot { padding: 28px 0 22px; color: var(--text-2); font-size: 14px; display: flex; flex-direction: column; gap: 6px; }
-.wordmark { display: block; text-align: center; font: 700 clamp(84px, 25vw, 340px)/.78 var(--font-display); font-stretch: 118%; letter-spacing: -.055em; white-space: nowrap; margin: 14px 0 -.09em; background: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 88%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.wordmark { display: block; text-align: center; font: 700 clamp(60px, 17.5vw, 250px)/.78 var(--font-display); font-stretch: 118%; letter-spacing: -.055em; white-space: nowrap; margin: 14px 0 -.09em; background: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 88%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .sticky-cta { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 15; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 8px 8px 18px; border-radius: 999px; border: 1px solid var(--border); background: rgba(14, 14, 20, .86); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); font-size: 14px; }
 .sticky-cta b { display: block; font-weight: 650; font-variant-numeric: tabular-nums; }
 .sticky-cta .btn { width: auto; min-height: 46px; padding: 0 22px; font-size: 15px; }

@@ -14,7 +14,7 @@ rmSync(out, { recursive: true, force: true });
 execSync("npx next build", { stdio: "inherit" });
 
 for (const other of APPS.filter((a) => a !== app)) rmSync(path.join(out, other), { recursive: true, force: true });
-const name = app === "sobra" ? "Sobra" : "Cobrança";
+const name = app === "sobra" ? "Sobra" : "Facilita IA";
 writeFileSync(path.join(out, "manifest.webmanifest"), JSON.stringify({
   name, short_name: name, lang: "pt-BR", start_url: `/${app}/`, display: "standalone",
   background_color: "#F7F7FA", theme_color: app === "sobra" ? "#7054E6" : "#3A4AFF",

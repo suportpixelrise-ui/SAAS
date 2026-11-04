@@ -4,7 +4,7 @@ import "./globals.css";
 
 const mona = Mona_Sans({ subsets: ["latin"], axes: ["wdth"], variable: "--f-mona", display: "swap" });
 const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: "italic", variable: "--f-serif", display: "swap" });
-const APP = process.env.NEXT_PUBLIC_APP === "sobra" ? "Sobra" : process.env.NEXT_PUBLIC_APP === "cobranca" ? "Cobrança" : "Cobrança e Sobra";
+const APP = process.env.NEXT_PUBLIC_APP === "sobra" ? "Sobra" : process.env.NEXT_PUBLIC_APP === "cobranca" ? "Facilita IA" : "Facilita IA e Sobra";
 
 export const metadata: Metadata = {
   title: { default: APP, template: `%s · ${APP}` },

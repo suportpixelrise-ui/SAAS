@@ -14,6 +14,8 @@ export interface Product {
   benefits: string[];
   /** Título em duas partes: a segunda sai na fonte de destaque. */
   paywallTitle: [string, string];
+  /** A pessoa paga no checkout da Cakto, que pede os dados dela. */
+  checkoutExterno?: boolean;
 }
 
 export const GUARANTEE_DAYS = 7;
@@ -21,13 +23,14 @@ export const GUARANTEE_DAYS = 7;
 export const PRODUCTS: Record<ProductId, Product> = {
   cobranca: {
     id: "cobranca",
-    name: "Cobrança",
+    name: "Facilita IA",
     audience: "Para personal, professores, pilates, escolinhas e nutricionistas",
     tagline: "Cobre seus alunos e clientes fixos pelo WhatsApp, com Pix, sem constrangimento.",
     home: "/cobranca/",
     prices: [2999],
     benefits: ["Clientes sem limite", "Lembretes de cobrança todo dia", "Painel de quem pagou e quem deve"],
     paywallTitle: ["Receba sem precisar", "ficar lembrando."],
+    checkoutExterno: true,
   },
   sobra: {
     id: "sobra",
