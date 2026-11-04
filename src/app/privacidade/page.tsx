@@ -11,7 +11,7 @@ export default function Privacidade() {
       <p>Esta política explica quais dados pessoais o {p.name} usa, por quê e quais são os seus direitos, de acordo com a Lei Geral de Proteção de Dados (LGPD, Lei 13.709/2018).</p>
 
       <h2>1. Quem cuida dos dados</h2>
-      <p>O responsável é <Campo k="razaoSocial" />, CNPJ <Campo k="cnpj" />, com endereço em <Campo k="endereco" />. Para qualquer assunto de privacidade, o canal é o <Suporte />.</p>
+      <p>O responsável é <Campo k="nome" />, de <Campo k="cidade" />. Para qualquer assunto de privacidade, o canal é o <Suporte />.</p>
 
       <h2>2. Dois papéis diferentes</h2>
       <ul>

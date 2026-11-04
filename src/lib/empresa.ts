@@ -2,19 +2,15 @@
 // Campo vazio aparece destacado nas páginas, para não publicar sem querer.
 
 export const EMPRESA = {
-  razaoSocial: "",
-  cnpj: "",
-  endereco: "",
-  cidadeForo: "",
+  nome: "",
+  cidade: "",
 };
 
 export type CampoEmpresa = keyof typeof EMPRESA;
 
 export const ROTULOS: Record<CampoEmpresa, string> = {
-  razaoSocial: "RAZÃO SOCIAL",
-  cnpj: "CNPJ",
-  endereco: "ENDEREÇO COMPLETO",
-  cidadeForo: "CIDADE E ESTADO DA EMPRESA",
+  nome: "SEU NOME COMPLETO",
+  cidade: "CIDADE E ESTADO",
 };
 
 /** Suporte pelo WhatsApp. É também o canal de contato nos Termos e na Política. */

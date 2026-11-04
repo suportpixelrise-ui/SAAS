@@ -12,7 +12,7 @@ export default function Termos() {
       <p>Estes termos explicam as regras para usar o {p.name}. Ao criar sua conta ou assinar, você concorda com eles.</p>
 
       <h2>1. Quem somos</h2>
-      <p>O {p.name} é oferecido por <Campo k="razaoSocial" />, CNPJ <Campo k="cnpj" />, com endereço em <Campo k="endereco" />. Fale com a gente pelo <Suporte />.</p>
+      <p>O {p.name} é oferecido por <Campo k="nome" />, de <Campo k="cidade" />. Fale com a gente pelo <Suporte />.</p>
 
       <h2>2. O que é o serviço</h2>
       <p>O {p.name} é um aplicativo na internet para organizar o seu negócio. Você cadastra suas informações, e o app ajuda a acompanhar valores, datas e mensagens.</p>
@@ -68,7 +68,7 @@ export default function Termos() {
       <p>Se mudarmos algo importante, avisaremos por e-mail ou no app antes de a mudança valer. A data no topo mostra a versão atual.</p>
 
       <h2>12. Lei e foro</h2>
-      <p>Estes termos seguem as leis do Brasil. Se você for consumidor, pode resolver qualquer questão no foro da sua cidade. Nos demais casos, vale o foro de <Campo k="cidadeForo" />.</p>
+      <p>Estes termos seguem as leis do Brasil. Se você for consumidor, pode resolver qualquer questão no foro da sua cidade. Nos demais casos, vale o foro de <Campo k="cidade" />.</p>
     </LegalPage>
   );
 }
