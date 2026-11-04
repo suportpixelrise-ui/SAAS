@@ -1,6 +1,6 @@
 // Regras dos avisos da Cakto, sem banco e sem rede, para poder testar.
 
-import { GRACE_DAYS, GUARANTEE_DAYS } from "./plans.js";
+import { GRACE_DAYS, GUARANTEE_DAYS, PLANS } from "./plans.js";
 
 const DAY = 86400_000;
 const iso = (ms) => new Date(ms).toISOString();
@@ -37,36 +37,70 @@ export async function origemValida({ segredo, timestamp, assinatura, corpo, secr
   return hmacConfere(segredo, `${timestamp}.${corpo}`, assinatura.replace(/^v1=/, ""));
 }
 
+/** E-mail como o login guarda: sem espaços e em minúsculas. Devolve null se não parecer um e-mail. */
+export function normalizarEmail(valor) {
+  const email = typeof valor === "string" ? valor.trim().toLowerCase() : "";
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : null;
+}
+
+/** Qual app foi comprado, pela oferta do aviso. A Cakto pode vender outros produtos na mesma conta. */
+export function produtoDoAviso(data) {
+  const oferta = data?.offer?.id;
+  const url = String(data?.checkoutUrl ?? "");
+  for (const [product, plan] of Object.entries(PLANS)) {
+    if (!plan.checkout) continue;
+    const curta = plan.checkout.split("_")[0];
+    if (oferta === plan.checkout || oferta === curta || url.includes(`/${curta}`)) return product;
+  }
+  return null;
+}
+
+/** Segunda assinatura paga por quem já está com uma ativa: por exemplo, duas abas de pagamento. */
+export function pagamentoDuplicado(event, data, sub, agora = Date.now()) {
+  const id = idDaAssinatura(data);
+  return event === "purchase_approved" && Boolean(id && sub.cakto_subscription_id) && id !== sub.cakto_subscription_id
+    && sub.status === "ativa" && Date.parse(sub.access_until) > agora;
+}
+
 /** O que muda na assinatura com este aviso. Devolve null quando não muda nada. */
 export function mudancaDoEvento(event, data, sub, agora = Date.now()) {
-  const ligacao = {};
-  const assinaturaId = idDaAssinatura(data);
-  if (assinaturaId && assinaturaId !== sub.cakto_subscription_id) ligacao.cakto_subscription_id = assinaturaId;
-  const soLigacao = Object.keys(ligacao).length ? ligacao : null;
+  const id = idDaAssinatura(data);
+  const salvo = sub.cakto_subscription_id;
+  const outra = Boolean(id && salvo && id !== salvo);
+  const ligacao = id && !salvo ? { cakto_subscription_id: id } : null;
 
   switch (event) {
     case "purchase_approved":
     case "subscription_renewed":
     case "subscription_late_recovered": {
-      if (sub.status === "reembolsada") return soLigacao;
+      // Aviso repetido: o mesmo pedido não estende o acesso duas vezes.
+      if (data.id && data.id === sub.last_payment_id) return ligacao;
+      if (sub.status === "reembolsada" && !outra) return ligacao;
       const fim = agora + (sub.cycle === "anual" ? 366 : 31) * DAY;
       return {
         ...ligacao,
+        ...(outra ? { cakto_subscription_id: id } : {}),
         status: "ativa",
+        provider: "cakto",
+        refunded_at: null,
+        canceled_at: null,
         last_payment_id: data.id,
         current_period_end: iso(fim),
         access_until: iso(fim + GRACE_DAYS * DAY),
-        ...(sub.paid_at ? {} : { paid_at: iso(agora), refundable_until: iso(agora + GUARANTEE_DAYS * DAY), first_payment_id: data.id }),
+        ...(!sub.paid_at || outra ? { paid_at: iso(agora), refundable_until: iso(agora + GUARANTEE_DAYS * DAY), first_payment_id: data.id } : {}),
       };
     }
     case "refund":
     case "chargeback":
-      if (sub.status === "reembolsada") return soLigacao;
+      // Devolução de uma assinatura em dobro não pode cortar a que vale.
+      if (outra) return null;
+      if (sub.status === "reembolsada") return ligacao;
       return { ...ligacao, status: "reembolsada", access_until: iso(agora), refunded_at: iso(agora), guarantee_used: true };
     case "subscription_canceled":
-      if (["reembolsada", "cancelada"].includes(sub.status)) return soLigacao;
+      if (outra) return null;
+      if (["reembolsada", "cancelada"].includes(sub.status)) return ligacao;
       return { ...ligacao, status: "cancelada", canceled_at: iso(agora) };
     default:
-      return soLigacao;
+      return ligacao;
   }
 }

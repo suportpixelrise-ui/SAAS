@@ -28,7 +28,7 @@ const COPY: Record<ProductId, Copy> = {
       ["Envie com um toque", "A mensagem abre no seu WhatsApp com o valor e o Pix copia e cola prontos."],
     ],
     tiles: {
-      big: ["Cobrar deixa de ser constrangedor", "A mensagem sai educada e pronta, com o Pix junto. Você só confere e envia."],
+      big: ["Nunca mais esqueça de cobrar", "O app mostra quem vence hoje e já deixa a mensagem pronta, com o valor e o Pix. Você só confere e envia."],
       rest: [
         ["users", "Quem pagou e quem deve", "Um painel com o que entrou e o que falta no mês."],
         ["box", "Pacotes e faltas", "Conte sessões, faltas avisadas e pacotes que estão acabando."],
@@ -37,8 +37,8 @@ const COPY: Record<ProductId, Copy> = {
         ["bell", "Lembretes do dia", "Antes, no dia e depois do vencimento, numa fila só."],
       ],
     },
-    without: ["Planilha ou caderno para lembrar quem deve", "Mensagem digitada uma por uma", "Vergonha de cobrar quem atrasou", "Dinheiro esquecido no fim do mês"],
-    withApp: ["Todos os clientes e vencimentos num lugar", "Mensagem e Pix prontos em um toque", "Texto educado, do seu jeito", "O total do mês sempre à vista"],
+    without: ["Planilha ou caderno para lembrar quem deve", "Mensagem digitada uma por uma", "Vencimento que passa sem ninguém cobrar", "Dinheiro esquecido no fim do mês"],
+    withApp: ["Todos os clientes e vencimentos num lugar", "Mensagem e Pix prontos em um toque", "Aviso de quem vence, antes de passar do prazo", "O total do mês sempre à vista"],
     faq: [
       ["O app envia as mensagens sozinho?", "Não. Ele abre o seu próprio WhatsApp com a mensagem pronta e você confere e envia. Assim a conversa continua sendo sua e o seu número não corre risco."],
       ["O dinheiro dos clientes passa pelo app?", "Não. O Pix vai direto para a sua chave. Você só marca no app quando recebeu."],
@@ -247,6 +247,10 @@ export function Landing({ id }: { id: ProductId }) {
         <footer className="foot">
           <span>Dinheiro dos seus clientes? Nunca passa pelo app.</span>
           <span>{p.name}, feito para quem trabalha por conta própria.</span>
+          <nav className="foot-links" aria-label="Documentos">
+            <Link href="/termos/">Termos de uso</Link>
+            <Link href="/privacidade/">Política de privacidade</Link>
+          </nav>
         </footer>
       </main>
 

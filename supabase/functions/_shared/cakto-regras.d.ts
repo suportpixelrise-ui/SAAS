@@ -8,4 +8,7 @@ export declare function origemValida(args: {
   secretDoCorpo?: string;
   agora?: number;
 }): Promise<boolean>;
+export declare function normalizarEmail(valor: unknown): string | null;
+export declare function produtoDoAviso(data: Dados): "cobranca" | "sobra" | null;
+export declare function pagamentoDuplicado(event: string, data: Dados, sub: Dados, agora?: number): boolean;
 export declare function mudancaDoEvento(event: string, data: Dados, sub: Dados, agora?: number): Record<string, unknown> | null;

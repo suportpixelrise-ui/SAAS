@@ -25,7 +25,7 @@ export const PRODUCTS: Record<ProductId, Product> = {
     id: "cobranca",
     name: "Facilita IA",
     audience: "Para personal, professores, pilates, escolinhas e nutricionistas",
-    tagline: "Cobre seus alunos e clientes fixos pelo WhatsApp, com Pix, sem constrangimento.",
+    tagline: "Saiba quem vence hoje e cobre seus clientes fixos pelo WhatsApp em um toque, com o Pix pronto.",
     home: "/cobranca/",
     prices: [2999],
     benefits: ["Clientes sem limite", "Lembretes de cobrança todo dia", "Painel de quem pagou e quem deve"],

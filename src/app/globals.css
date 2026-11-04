@@ -513,3 +513,33 @@ form { margin: 0; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Termos, política e o aceite no cadastro */
+.foot-links { display: flex; flex-wrap: wrap; gap: 16px; }
+.foot-links a, .aceite a, .legal a:not(.brandmark) { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.aceite { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.45; cursor: pointer; }
+.aceite input { flex: none; width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--accent); }
+.legal { max-width: 720px; margin: 0 auto; padding: 28px 16px 56px; line-height: 1.6; overflow-wrap: anywhere; }
+.legal h1 { font: 700 clamp(30px, 6vw, 42px)/1.1 var(--font-display); margin: 26px 0 8px; }
+.legal h2 { font: 700 20px/1.25 var(--font-display); margin: 32px 0 8px; }
+.legal h3 { font-size: 16px; margin: 18px 0 6px; }
+.legal p { margin: 0 0 12px; }
+.legal ul { margin: 0 0 12px; padding-left: 22px; }
+.legal li { margin-bottom: 6px; }
+.legal mark { background: var(--warn-bg); color: var(--warn); padding: 1px 5px; border-radius: 5px; font-weight: 600; }
+.legal-nav { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 14px; }
+
+/* Página de venda mais curta: no celular os cartões arrastam para o lado; no computador, menos espaço entre as seções. */
+@media (max-width: 719px) {
+  .sec { padding-top: 52px; }
+  .steps, .bento, .versus { display: flex; gap: 12px; margin-top: 24px; margin-inline: -20px; padding-inline: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 20px; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .steps::-webkit-scrollbar, .bento::-webkit-scrollbar, .versus::-webkit-scrollbar { display: none; }
+  .steps > *, .bento > *, .versus > * { flex: 0 0 min(84%, 320px); scroll-snap-align: start; }
+}
+@media (min-width: 720px) {
+  .faq { display: grid; grid-template-columns: 1fr 1fr; align-items: start; max-width: none; }
+}
+@media (min-width: 1000px) {
+  .sec { padding-top: 80px; }
+  .final { margin-top: 80px; }
+}

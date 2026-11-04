@@ -15,7 +15,7 @@ const SUPABASE = `
   create role authenticated nologin;
   create role service_role nologin bypassrls;
   create schema auth;
-  create table auth.users (id uuid primary key);
+  create table auth.users (id uuid primary key, email text);
   create function auth.uid() returns uuid language sql stable as
     $$ select nullif(current_setting('test.sub', true), '')::uuid $$;
   grant usage on schema auth to anon, authenticated, service_role;
@@ -31,7 +31,7 @@ before(async () => {
   db = await PGlite.create();
   await db.exec(SUPABASE);
   for (const f of readdirSync("supabase/migrations").sort()) await db.exec(readFileSync(`supabase/migrations/${f}`, "utf8"));
-  await db.exec(`insert into auth.users values ('${ANA}'), ('${BIA}')`);
+  await db.exec(`insert into auth.users values ('${ANA}', 'ana@email.com'), ('${BIA}', 'bia@email.com')`);
 });
 
 beforeEach(async () => {
@@ -175,4 +175,16 @@ test("apagar um cliente leva junto as cobranças e as presenças dele", async ()
     assert.equal((await db.query("select * from public.cob_charges")).rows.length, 0);
     assert.equal((await db.query("select * from public.cob_attendance")).rows.length, 0);
   });
+});
+
+test("conta pelo e-mail: acha com maiúsculas e espaços, e só o servidor pode procurar", async () => {
+  await db.exec("set role service_role");
+  const { rows } = await db.query<{ id: string }>("select public.conta_por_email($1) as id", ["  ANA@Email.com "]);
+  const { rows: nada } = await db.query<{ id: string | null }>("select public.conta_por_email($1) as id", ["ninguem@email.com"]);
+  await db.exec("reset role");
+  assert.equal(rows[0].id, ANA);
+  assert.equal(nada[0].id, null);
+  for (const uid of [null, ANA]) {
+    await assert.rejects(as(uid, () => db.query("select public.conta_por_email($1)", ["bia@email.com"])), /permission denied/);
+  }
 });
