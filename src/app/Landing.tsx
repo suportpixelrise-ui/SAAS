@@ -14,40 +14,44 @@ interface Copy {
   without: string[]; withApp: string[];
   faq: [string, string][];
   final: string;
+  /** Títulos das seções. Em dois pedaços, o segundo sai na fonte de destaque. */
+  titles: { problem: [string, string]; steps: [string, string]; tiles: string; price: string };
 }
 
 const COPY: Record<ProductId, Copy> = {
   cobranca: {
     who: "Para quem vive de clientes fixos",
-    h1: "Receba todo mês",
-    h1b: "sem correr atrás.",
-    sub: "Cadastre seus clientes uma vez. O app mostra quem vence, monta a mensagem com o Pix e você envia pelo seu WhatsApp em um toque.",
+    h1: "Cobrança esquecida",
+    h1b: "é dinheiro perdido.",
+    sub: "Veja todo dia quem vence, quem atrasou e quem já pagou. A mensagem com o valor e o Pix abre pronta no seu WhatsApp. Sem planilha e sem caçar conversa.",
     ticker: ["Personal trainer", "Professor particular", "Estúdio de pilates", "Escolinha", "Nutricionista"],
     steps: [
-      ["Cadastre seus clientes", "Nome, WhatsApp, valor e vencimento. Mensalidade, pacote ou por sessão."],
-      ["Veja quem cobrar hoje", "O app separa quem vence, quem atrasou e quem já pagou."],
-      ["Envie com um toque", "A mensagem abre no seu WhatsApp com o valor e o Pix copia e cola prontos."],
+      ["Cadastre uma vez", "Nome, WhatsApp, valor e vencimento. Serve para mensalidade, pacote ou sessão avulsa."],
+      ["Abra e veja quem cobrar", "O app separa quem vence hoje, quem atrasou e quem já pagou. Nada depende da sua memória."],
+      ["Cobre com um toque", "Seu WhatsApp abre com a mensagem, o valor e o Pix prontos. Você só aperta enviar."],
     ],
     tiles: {
       big: ["Nunca mais esqueça de cobrar", "O app mostra quem vence hoje e já deixa a mensagem pronta, com o valor e o Pix. Você só confere e envia."],
       rest: [
-        ["users", "Quem pagou e quem deve", "Um painel com o que entrou e o que falta no mês."],
+        ["users", "Quem pagou e quem deve", "Chega de rolar conversa atrás de comprovante. O mês inteiro numa tela só."],
         ["box", "Pacotes e faltas", "Conte sessões, faltas avisadas e pacotes que estão acabando."],
         ["pause", "Cliente viajou?", "Pause a cobrança e volte quando ele voltar."],
         ["check", "Seu dinheiro é seu", "O Pix cai direto na sua conta. O app não toca nele."],
-        ["bell", "Lembretes do dia", "Antes, no dia e depois do vencimento, numa fila só."],
+        ["bell", "Lembretes do dia", "Antes, no dia e depois do vencimento, numa fila só. É só ir enviando."],
       ],
     },
-    without: ["Planilha ou caderno para lembrar quem deve", "Mensagem digitada uma por uma", "Vencimento que passa sem ninguém cobrar", "Dinheiro esquecido no fim do mês"],
-    withApp: ["Todos os clientes e vencimentos num lugar", "Mensagem e Pix prontos em um toque", "Aviso de quem vence, antes de passar do prazo", "O total do mês sempre à vista"],
+    without: ["Você só lembra de cobrar quando o dinheiro faz falta", "Procura no WhatsApp quem pagou e quem não pagou", "Digita a mesma mensagem e o Pix, cliente por cliente", "O vencimento passa e a cobrança atrasa junto"],
+    withApp: ["Todo dia o app mostra quem cobrar", "Quem pagou e quem deve, numa tela só", "Mensagem com valor e Pix pronta em um toque", "Lembrete antes, no dia e depois do vencimento"],
     faq: [
+      ["Já uso planilha. Por que mudar?", "A planilha guarda a informação, mas não avisa nem monta a cobrança. O app mostra quem cobrar hoje e deixa a mensagem pronta."],
       ["O app envia as mensagens sozinho?", "Não. Ele abre o seu próprio WhatsApp com a mensagem pronta e você confere e envia. Assim a conversa continua sendo sua e o seu número não corre risco."],
       ["O dinheiro dos clientes passa pelo app?", "Não. O Pix vai direto para a sua chave. Você só marca no app quando recebeu."],
       ["Preciso instalar alguma coisa?", "Não. Funciona no navegador do celular e do computador."],
       ["Como funciona a garantia?", `Você assina e tem ${GUARANTEE_DAYS} dias para testar. Se não gostar, pede o dinheiro de volta no próprio app.`],
       ["Posso cancelar quando quiser?", "Pode, direto no app. Você continua usando até o fim do período pago."],
     ],
-    final: "Comece hoje e cobre seu primeiro cliente em poucos minutos.",
+    final: "No próximo vencimento, a cobrança já sai em um toque.",
+    titles: { problem: ["Cobrar de memória", "sai caro."], steps: ["Em três passos", "você para de esquecer."], tiles: "Tudo para o dinheiro do mês entrar", price: "Uma mensalidade recuperada já paga o app" },
   },
   sobra: {
     who: "Para quem vende o que faz",
@@ -80,6 +84,7 @@ const COPY: Record<ProductId, Copy> = {
       ["Posso cancelar quando quiser?", "Pode, direto no app. Você continua usando até o fim do período pago."],
     ],
     final: "Calcule o preço do seu primeiro produto hoje.",
+    titles: { problem: ["Sem o app,", "e com ele."], steps: ["Em três passos", "você começa."], tiles: "Tudo que faz diferença no fim do mês", price: "Um preço simples" },
   },
 };
 
@@ -197,27 +202,27 @@ export function Landing({ id }: { id: ProductId }) {
       <Ticker items={c.ticker} />
 
       <main className="wrap">
-        <Section title={<>Em três passos <span className="serif">você começa.</span></>}>
-          <div className="steps">
-            {c.steps.map(([t, d]) => <article className="step" key={t}><h3>{t}</h3><p>{d}</p></article>)}
-          </div>
-        </Section>
-
-        <Section title="Tudo que faz diferença no fim do mês">
-          <div className="bento">
-            <article className="tile color"><h3>{c.tiles.big[0]}</h3><p>{c.tiles.big[1]}</p></article>
-            {c.tiles.rest.map(([ico, t, d], i) => <article className={`tile ${i >= 3 ? "w3" : ""}`} key={t}><span className="tile-ico"><Icon name={ico} size={20} /></span><h3>{t}</h3><p>{d}</p></article>)}
-          </div>
-        </Section>
-
-        <Section title={<>Sem o app, <span className="serif">e com ele.</span></>}>
+        <Section title={<>{c.titles.problem[0]} <span className="serif">{c.titles.problem[1]}</span></>}>
           <div className="versus">
             <div className="side-by no"><h3>Hoje</h3><ul>{c.without.map((t) => <li key={t}>{t}</li>)}</ul></div>
             <div className="side-by yes" data-app={id}><h3>Com o {p.name}</h3><ul>{c.withApp.map((t) => <li key={t}>{t}</li>)}</ul></div>
           </div>
         </Section>
 
-        <Section id="preco" title="Um preço simples">
+        <Section title={<>{c.titles.steps[0]} <span className="serif">{c.titles.steps[1]}</span></>}>
+          <div className="steps">
+            {c.steps.map(([t, d]) => <article className="step" key={t}><h3>{t}</h3><p>{d}</p></article>)}
+          </div>
+        </Section>
+
+        <Section title={c.titles.tiles}>
+          <div className="bento">
+            <article className="tile color"><h3>{c.tiles.big[0]}</h3><p>{c.tiles.big[1]}</p></article>
+            {c.tiles.rest.map(([ico, t, d], i) => <article className={`tile ${i >= 3 ? "w3" : ""}`} key={t}><span className="tile-ico"><Icon name={ico} size={20} /></span><h3>{t}</h3><p>{d}</p></article>)}
+          </div>
+        </Section>
+
+        <Section id="preco" title={c.titles.price}>
           <div className="price">
             <div className="stack" style={{ gap: 18 }}>
               <div className="price-n">{price} <small>por mês</small></div>
