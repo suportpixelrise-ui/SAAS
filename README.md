@@ -66,7 +66,9 @@ O botão de assinar leva para a oferta que está em `checkout`, no arquivo `supa
 
 Enquanto faltar um dos três, o site avisa que o pagamento não está configurado e não manda ninguém para o checkout. Assim, ninguém paga sem receber o acesso.
 
-**Conferir na primeira compra real:** a documentação não mostra o nome do campo com o id da assinatura nos avisos nem diz se o `callback` se repete nas renovações. O `cakto-webhook` grava no log só os nomes dos campos de cada aviso, para conferir. Veja se `cakto_subscription_id` foi preenchido na tabela `subscriptions`: sem ele, o cancelamento pelo app avisa para falar com o suporte.
+**Testado com compra real em 2026-11-04:** o aviso traz `callback` e `subscription.id`, e o acesso abriu sozinho. Ainda não foi vista uma renovação. Se ela vier sem `callback`, o sistema acha a conta pelo id da assinatura.
+
+**A chave do webhook é a que a Cakto mostra:** ela gera a própria chave, de 36 caracteres. Copie do webhook, no ícone do olho. Se a chave no Supabase for diferente, os avisos são recusados com erro 401.
 
 ### 3. Asaas (Sobra, pausado)
 
