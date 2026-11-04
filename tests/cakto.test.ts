@@ -36,6 +36,10 @@ test("sem assinatura no cabeçalho, vale só o segredo certo no corpo", async ()
   assert.equal(await origemValida({ ...base, segredo: "", secretDoCorpo: "" }), false);
 });
 
+test("segredo certo no corpo vale mesmo se a assinatura do cabeçalho não bater", async () => {
+  assert.equal(await origemValida({ segredo: "segredo", timestamp: "1", assinatura: "v1=abc", corpo: "{}", secretDoCorpo: "segredo" }), true);
+});
+
 test("lê o id da assinatura nos dois formatos", () => {
   assert.equal(idDaAssinatura({ subscription: { id: "a" } }), "a");
   assert.equal(idDaAssinatura({ subscription: "b" }), "b");

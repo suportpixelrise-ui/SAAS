@@ -27,10 +27,11 @@ async function hmacConfere(segredo, texto, hex) {
   return crypto.subtle.verify("HMAC", key, bytes, enc.encode(texto));
 }
 
-/** Prova que o aviso veio da Cakto: pela assinatura no cabeçalho ou, sem ela, pelo segredo no corpo. */
+/** Prova que o aviso veio da Cakto: pelo segredo no corpo ou pela assinatura no cabeçalho. A Cakto diz que os dois valem. */
 export async function origemValida({ segredo, timestamp, assinatura, corpo, secretDoCorpo, agora = Date.now() }) {
   if (!segredo) return false;
-  if (!assinatura) return igual(segredo, secretDoCorpo);
+  if (igual(segredo, secretDoCorpo)) return true;
+  if (!assinatura) return false;
   const quando = Number(timestamp) * 1000;
   if (!Number.isFinite(quando) || Math.abs(agora - quando) > TOLERANCIA_MS) return false;
   return hmacConfere(segredo, `${timestamp}.${corpo}`, assinatura.replace(/^v1=/, ""));

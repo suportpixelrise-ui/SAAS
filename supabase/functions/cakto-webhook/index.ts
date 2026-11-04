@@ -33,7 +33,15 @@ Deno.serve(async (req) => {
     corpo,
     secretDoCorpo: aviso.secret,
   });
-  if (!autorizado) return json({ error: "não autorizado" }, 401);
+  if (!autorizado) {
+    // Só tamanhos e formatos, nunca o valor: é o que mostra por que a senha não bateu.
+    const ts = req.headers.get("x-cakto-timestamp");
+    console.error(JSON.stringify({
+      recusado: aviso.event ?? null, senhaCadastrada: WEBHOOK_SECRET.length, senhaRecebida: aviso.secret?.length ?? null,
+      temAssinatura: req.headers.has("x-cakto-signature"), digitosTimestamp: ts?.length ?? null,
+    }));
+    return json({ error: "não autorizado" }, 401);
+  }
 
   const event = aviso.event ?? "";
   const data = aviso.data ?? {};

@@ -6,7 +6,7 @@ const BASE = "https://api.cakto.com.br/public_api";
 const CLIENT_ID = Deno.env.get("CAKTO_CLIENT_ID") ?? "";
 const CLIENT_SECRET = Deno.env.get("CAKTO_CLIENT_SECRET") ?? "";
 
-export const WEBHOOK_SECRET = Deno.env.get("CAKTO_WEBHOOK_SECRET") ?? "";
+export const WEBHOOK_SECRET = (Deno.env.get("CAKTO_WEBHOOK_SECRET") ?? "").trim();
 
 /** Só vende quando dá para receber o aviso: sem ele, a pessoa pagaria e o app não abriria. */
 export const caktoPronta = Boolean(CLIENT_ID && CLIENT_SECRET && WEBHOOK_SECRET);
