@@ -559,3 +559,4 @@ form { margin: 0; }
 .plano-t em { padding: 4px 10px; border-radius: 999px; background: var(--accent); color: #fff; font-style: normal; font-size: 14px; }
 .plano .price-n { font-size: clamp(40px, 11vw, 56px); }
 .plano .price-n small { font-size: 15px; }
+.final .lp-micro { color: #fff; }
