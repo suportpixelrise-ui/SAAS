@@ -226,7 +226,7 @@ export function Landing({ id }: { id: ProductId }) {
           <div className="price">
             <div className="stack" style={{ gap: 18 }}>
               <div className="price-n">{price} <small>por mês</small></div>
-              {p.yearlyPrice && <span className="lead">Ou {brl(p.yearlyPrice)} por ano</span>}
+              {p.yearlyPrice && <div className="seal"><div><b>Ou {brl(p.yearlyPrice)} por ano</b><span>Sai {brl(Math.round(p.yearlyPrice / 12))} por mês e você economiza {brl(p.prices[0] * 12 - p.yearlyPrice)}. Você escolhe o plano depois de criar a conta.</span></div></div>}
               <div className="seal"><i>{GUARANTEE_DAYS}</i><div><b>Dias de garantia</b><span>Pediu no app, o dinheiro volta.</span></div></div>
             </div>
             <div className="stack" style={{ gap: 14 }}>
