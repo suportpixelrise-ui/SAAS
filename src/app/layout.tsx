@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Serif, Mona_Sans } from "next/font/google";
+import { Pixel } from "@/components/Pixel";
 import "./globals.css";
 
 const mona = Mona_Sans({ subsets: ["latin"], axes: ["wdth"], variable: "--f-mona", display: "swap" });
@@ -30,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Endereço e chave pública do Supabase. */}
         <script src="/config.js" />
       </head>
-      <body>{children}</body>
+      <body>{children}<Pixel /></body>
     </html>
   );
 }

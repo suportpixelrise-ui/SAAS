@@ -26,6 +26,7 @@ export default function Privacidade() {
         <li><b>Assinatura:</b> plano, valor, situação, datas e os códigos do pedido e da assinatura na Cakto. Se você comprar direto pelo link de pagamento, recebemos da Cakto o e-mail usado na compra para criar sua conta.</li>
         <li><b>Uso do app:</b> o que você preenche, como nome de exibição, chave Pix, cidade e tipo de negócio.</li>
         <li><b>Dados técnicos:</b> endereço IP e registros de acesso, usados para segurança.</li>
+        <li><b>Medição de anúncios:</b> se você aceitar os cookies, a Meta recebe as páginas públicas que você visitou, o fato de ter criado uma conta e dados do seu navegador.</li>
       </ul>
       <p>Não guardamos número de cartão nem CPF. Esses dados ficam com a Cakto, no ambiente de pagamento dela.</p>
       <h3>Dos clientes de quem assina</h3>
@@ -40,6 +41,7 @@ export default function Privacidade() {
         <li><b>Cobrar a assinatura, devolver pagamentos e mandar e-mails do serviço:</b> execução de contrato.</li>
         <li><b>Guardar registros de pagamento e de acesso:</b> cumprimento de obrigação legal.</li>
         <li><b>Evitar fraude e proteger as contas:</b> legítimo interesse.</li>
+        <li><b>Medir anúncios no site:</b> seu consentimento, dado no aviso de cookies.</li>
       </ul>
       <p>Não vendemos dados pessoais. Não usamos os dados dos clientes de quem assina para falar com eles nem para fazer publicidade.</p>
 
@@ -50,6 +52,7 @@ export default function Privacidade() {
         <li><b>Netlify:</b> hospedagem do site.</li>
         <li><b>Cakto:</b> pagamento da assinatura.</li>
         <li><b>WhatsApp:</b> atendimento do suporte, quando você nos chama por lá.</li>
+        <li><b>Meta (Facebook e Instagram):</b> medição de anúncios, na página de venda e no cadastro, se você aceitar. A Cakto também avisa a Meta quando o checkout é aberto e quando uma compra é paga.</li>
       </ul>
       <p>Também podemos entregar dados quando uma lei ou uma ordem de autoridade exigir.</p>
       <p>Quando você toca para enviar uma cobrança, o app abre o seu WhatsApp. A partir daí, a conversa segue as regras do WhatsApp.</p>
@@ -80,7 +83,9 @@ export default function Privacidade() {
       <p>Se você é cliente de alguém que usa o app, fale primeiro com essa pessoa, porque é ela quem decide sobre seus dados. Se não conseguir, escreva para o mesmo WhatsApp e encaminharemos o pedido.</p>
 
       <h2>10. Cookies e armazenamento no navegador</h2>
-      <p>Usamos só o armazenamento do navegador necessário para manter você conectado. Não usamos cookies de publicidade.</p>
+      <p>Usamos o armazenamento do navegador necessário para manter você conectado.</p>
+      <p>Se você aceitar no aviso de cookies, também usamos o pixel da Meta para saber quais anúncios trazem visitas e cadastros. Ele só funciona nas páginas públicas e nunca dentro do app, onde ficam os dados dos seus clientes. Se você recusar, ele não é carregado no site.</p>
+      <p>Para mudar sua escolha, apague os dados deste site no seu navegador. O aviso aparece de novo.</p>
 
       <h2>11. Crianças e adolescentes</h2>
       <p>A conta é só para maiores de 18 anos. Se quem assina cadastrar um aluno menor de idade, deve usar os dados do responsável sempre que possível.</p>

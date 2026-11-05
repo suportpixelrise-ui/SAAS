@@ -7,6 +7,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { errorText, sb } from "@/lib/supabase";
 import { ajudaLink, suporteLink, TERMOS_VERSAO } from "@/lib/empresa";
 import { PRODUCTS } from "@/lib/products";
+import { pixelCadastro } from "@/components/Pixel";
 import { ErrorBox, Loading, NotConfigured, Notice } from "@/components/ui";
 
 // Login com e-mail e senha (Supabase Auth). A tela "nova" também recebe quem comprou direto na Cakto e veio do e-mail de boas-vindas.
@@ -87,7 +88,8 @@ function Entrar() {
         });
         if (failed) throw failed;
         // Com a confirmação de e-mail desligada, a conta já entra. Se estiver ligada, o aviso abaixo explica.
-        if (!data.session) setStep("enviado");
+        if (data.session) pixelCadastro();
+        else setStep("enviado");
       } else if (step === "entrar") {
         const { error: failed } = await client!.auth.signInWithPassword({ email: mail(), password });
         if (failed) throw failed;
