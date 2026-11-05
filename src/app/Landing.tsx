@@ -172,6 +172,7 @@ export function Landing({ id }: { id: ProductId }) {
   const p = PRODUCTS[id];
   const c = COPY[id];
   const price = brl(p.prices[0]);
+  const anual = p.yearlyPrice ? brl(p.yearlyPrice) : null;
   return (
     <div className="site night" data-app={id}>
       <div className="wrap nav">
@@ -192,7 +193,7 @@ export function Landing({ id }: { id: ProductId }) {
             <p className="lp-sub">{c.sub}</p>
             <div className="lp-cta">
               <Link className="btn" href={p.home}>Assinar por {price}</Link>
-              <span className="lp-micro">por mês, com {GUARANTEE_DAYS} dias de garantia.<br />Não gostou? O dinheiro volta.</span>
+              <span className="lp-micro">por mês{anual && `, ou ${anual} por ano`}, com {GUARANTEE_DAYS} dias de garantia.<br />Não gostou? O dinheiro volta.</span>
             </div>
           </div>
           <Showcase id={id} />
@@ -258,6 +259,7 @@ export function Landing({ id }: { id: ProductId }) {
         <section className="final">
           <h2>{c.final}</h2>
           <Link className="btn light" href={p.home}>Assinar por {price}</Link>
+          {anual && <span className="lp-micro">por mês, ou {anual} por ano</span>}
           <span>{GUARANTEE_DAYS} dias de garantia. Cancele quando quiser.</span>
         </section>
 
@@ -275,7 +277,7 @@ export function Landing({ id }: { id: ProductId }) {
       <span className="wordmark" aria-hidden="true">{p.name}</span>
 
       <div className="sticky-cta">
-        <span>Assinatura<b>{price} por mês</b></span>
+        <span>Assinatura<b>{anual ? `${price}/mês ou ${anual}/ano` : `${price} por mês`}</b></span>
         <Link className="btn" href={p.home}>Assinar</Link>
       </div>
     </div>
