@@ -19,7 +19,7 @@ export function AccessGate({ product, loginOnly, children }: { product: ProductI
 
   useEffect(() => {
     if (loading) return;
-    if (!user) router.replace(`/entrar/?volta=${encodeURIComponent(path)}`);
+    if (!user) router.replace(`/entrar/?volta=${encodeURIComponent(path + window.location.search)}`);
     else if (!subLoading && !allowed) router.replace(`/${product}/assinatura/`);
   }, [loading, user, subLoading, allowed, router, path, product]);
 

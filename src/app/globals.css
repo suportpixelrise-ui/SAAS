@@ -559,4 +559,15 @@ form { margin: 0; }
 .plano-t em { padding: 4px 10px; border-radius: 999px; background: var(--accent); color: #fff; font-style: normal; font-size: 14px; }
 .plano .price-n { font-size: clamp(40px, 11vw, 56px); }
 .plano .price-n small { font-size: 15px; }
-.final .lp-micro { color: #fff; }
+
+/* Botões de mensal e anual sempre do mesmo tamanho. */
+.lp-btns { display: grid; gap: 10px; width: 100%; }
+.lp-cta .lp-btns .btn, .final .lp-btns .btn { width: 100%; padding: 0 20px; }
+.plano .btn { min-height: 54px; font-size: 16px; }
+.sticky-cta.dois { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 8px; border-radius: 30px; }
+.sticky-cta.dois .btn { width: 100%; padding: 0 8px; font-size: 14px; }
+@media (min-width: 720px) {
+  .lp-btns { grid-template-columns: 1fr 1fr; max-width: 520px; }
+  .lp-cta { flex-direction: column; align-items: flex-start; }
+  .sticky-cta.dois { display: none; }
+}

@@ -20,8 +20,12 @@ export function Assinatura({ product }: { product: ProductId }) {
   const { user, sub } = useSession();
   const p = PRODUCTS[product];
   const access = hasAccess(sub);
-  // No Facilita, o mensal vem marcado: é o preço que o anúncio e a página de venda mostram.
-  const [cycle, setCycle] = useState<"mensal" | "anual">(p.yearlyPrice && !p.checkoutExterno ? "anual" : "mensal");
+  // O plano vem do botão da página de venda. Sem ele, no Facilita o mensal vem marcado.
+  const [planoDoBotao] = useState<"mensal" | "anual" | null>(() => {
+    const plano = new URLSearchParams(window.location.search).get("plano");
+    return plano === "anual" && p.yearlyPrice ? "anual" : plano === "mensal" ? "mensal" : null;
+  });
+  const [cycle, setCycle] = useState<"mensal" | "anual">(planoDoBotao ?? (p.yearlyPrice && !p.checkoutExterno ? "anual" : "mensal"));
   const [name, setName] = useState("");
   const [doc, setDoc] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +59,17 @@ export function Assinatura({ product }: { product: ProductId }) {
     const res = await criar({ product, cycle: ciclo, name: semDados ? undefined : name, cpfCnpj: semDados ? undefined : doc });
     if (res.url) window.location.href = res.url;
   });
+
+  // Quem clicou no plano na página de venda vai direto para o pagamento dele.
+  const abriu = useRef(false);
+  useEffect(() => {
+    if (abriu.current || !planoDoBotao || !externo || access) return;
+    abriu.current = true;
+    // Tira o plano do endereço: ao voltar da Cakto, a pessoa fica aqui em vez de ir para lá de novo.
+    window.history.replaceState(null, "", window.location.pathname);
+    void pagar(planoDoBotao);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function subscribe(e: React.FormEvent) {
     e.preventDefault();

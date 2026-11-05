@@ -173,6 +173,9 @@ export function Landing({ id }: { id: ProductId }) {
   const c = COPY[id];
   const price = brl(p.prices[0]);
   const anual = p.yearlyPrice ? brl(p.yearlyPrice) : null;
+  const economia = p.yearlyPrice ? brl(p.prices[0] * 12 - p.yearlyPrice) : null;
+  const mensalHref = anual ? `${p.home}assinatura/?plano=mensal` : p.home;
+  const anualHref = `${p.home}assinatura/?plano=anual`;
   return (
     <div className="site night" data-app={id}>
       <div className="wrap nav">
@@ -180,7 +183,7 @@ export function Landing({ id }: { id: ProductId }) {
           <Link className="brandmark" href="/">{p.name}</Link>
           <div className="links">
             <Link className="enter" href={`/entrar/?volta=${encodeURIComponent(p.home)}`}>Entrar</Link>
-            <Link className="btn sm" href={p.home}>Assinar</Link>
+            <Link className="btn sm" href={anual ? "#preco" : p.home}>Assinar</Link>
           </div>
         </div>
       </div>
@@ -192,8 +195,11 @@ export function Landing({ id }: { id: ProductId }) {
             <h1 className="lp-h1">{c.h1} <span className="serif">{c.h1b}</span></h1>
             <p className="lp-sub">{c.sub}</p>
             <div className="lp-cta">
-              <Link className="btn" href={p.home}>Assinar por {price}</Link>
-              <span className="lp-micro">por mês{anual && `, ou ${anual} por ano`}, com {GUARANTEE_DAYS} dias de garantia.<br />Não gostou? O dinheiro volta.</span>
+              <div className="lp-btns">
+                <Link className="btn" href={mensalHref}>{anual ? `Mensal por ${price}` : `Assinar por ${price}`}</Link>
+                {anual && <Link className="btn" href={anualHref}>Anual por {anual}</Link>}
+              </div>
+              <span className="lp-micro">{economia ? `No anual você economiza ${economia}. ` : "por mês, "}{GUARANTEE_DAYS} dias de garantia.<br />Não gostou? O dinheiro volta.</span>
             </div>
           </div>
           <Showcase id={id} />
@@ -231,12 +237,13 @@ export function Landing({ id }: { id: ProductId }) {
                   <div className="plano">
                     <span className="plano-t">Mensal</span>
                     <div className="price-n">{price} <small>por mês</small></div>
+                    <Link className="btn" href={mensalHref}>Assinar o mensal</Link>
                   </div>
                   <div className="plano anual">
                     <span className="plano-t">Anual <em>Economize {brl(p.prices[0] * 12 - p.yearlyPrice)} por ano</em></span>
                     <div className="price-n">{brl(p.yearlyPrice)} <small>por ano. Sai {brl(Math.round(p.yearlyPrice / 12))} por mês, em vez de {price}</small></div>
+                    <Link className="btn" href={anualHref}>Assinar o anual</Link>
                   </div>
-                  <span className="muted small">Você escolhe o plano depois de criar a conta.</span>
                 </div>
               ) : <div className="price-n">{price} <small>por mês</small></div>}
               <div className="seal"><i>{GUARANTEE_DAYS}</i><div><b>Dias de garantia</b><span>Pediu no app, o dinheiro volta.</span></div></div>
@@ -245,7 +252,7 @@ export function Landing({ id }: { id: ProductId }) {
               {p.benefits.map((b) => <span className="check" key={b}>{b}</span>)}
               <span className="check">Preço travado por 12 meses</span>
               <span className="check">Cancele quando quiser, direto no app</span>
-              <Link className="btn" href={p.home}>Assinar agora</Link>
+              {!anual && <Link className="btn" href={p.home}>Assinar agora</Link>}
             </div>
           </div>
         </Section>
@@ -258,8 +265,10 @@ export function Landing({ id }: { id: ProductId }) {
 
         <section className="final">
           <h2>{c.final}</h2>
-          <Link className="btn light" href={p.home}>Assinar por {price}</Link>
-          {anual && <span className="lp-micro">por mês, ou {anual} por ano</span>}
+          <div className="lp-btns">
+            <Link className="btn light" href={mensalHref}>{anual ? `Mensal por ${price}` : `Assinar por ${price}`}</Link>
+            {anual && <Link className="btn light" href={anualHref}>Anual por {anual}</Link>}
+          </div>
           <span>{GUARANTEE_DAYS} dias de garantia. Cancele quando quiser.</span>
         </section>
 
@@ -276,10 +285,17 @@ export function Landing({ id }: { id: ProductId }) {
 
       <span className="wordmark" aria-hidden="true">{p.name}</span>
 
-      <div className="sticky-cta">
-        <span>Assinatura<b>{anual ? `${price}/mês ou ${anual}/ano` : `${price} por mês`}</b></span>
-        <Link className="btn" href={p.home}>Assinar</Link>
-      </div>
+      {anual ? (
+        <div className="sticky-cta dois">
+          <Link className="btn" href={mensalHref}>{price}/mês</Link>
+          <Link className="btn" href={anualHref}>{anual}/ano</Link>
+        </div>
+      ) : (
+        <div className="sticky-cta">
+          <span>Assinatura<b>{price} por mês</b></span>
+          <Link className="btn" href={p.home}>Assinar</Link>
+        </div>
+      )}
     </div>
   );
 }
