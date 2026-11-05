@@ -28,6 +28,7 @@ export const PRODUCTS: Record<ProductId, Product> = {
     tagline: "Saiba quem vence hoje e cobre seus clientes fixos pelo WhatsApp em um toque, com o Pix pronto.",
     home: "/cobranca/",
     prices: [2999],
+    yearlyPrice: 19000,
     benefits: ["Clientes sem limite", "Lembretes de cobrança todo dia", "Painel de quem pagou e quem deve"],
     paywallTitle: ["Receba sem precisar", "ficar lembrando."],
     checkoutExterno: true,

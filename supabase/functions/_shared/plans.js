@@ -2,9 +2,9 @@
 // `prices` tem um valor por app. Com mais de um, vira teste de preço: cada conta cai sempre no mesmo (pelo uid).
 
 export const PLANS = {
-  // `checkout` é a oferta da Cakto. Na Cakto o produto custa R$ 0,99 a menos: ela soma a taxa ao comprador.
+  // `checkout` e `checkoutAnual` são as ofertas da Cakto. Lá elas custam R$ 0,99 a menos: a Cakto soma a taxa ao comprador.
   // `site` e `home` são para onde vai o link de criar a senha, no e-mail de boas-vindas.
-  cobranca: { name: "Cobrança", prices: [2999], yearly: null, checkout: "3a8bf5i_1280313", site: "https://cobranca-clientes.netlify.app/", home: "/cobranca/" },
+  cobranca: { name: "Cobrança", prices: [2999], yearly: 19000, checkout: "3a8bf5i_1280313", checkoutAnual: "pqqz9rk", site: "https://cobranca-clientes.netlify.app/", home: "/cobranca/" },
   sobra: { name: "Sobra", prices: [1999], yearly: 9700 },
 };
 

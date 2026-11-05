@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
-import { idDaAssinatura, mudancaDoEvento, normalizarEmail, origemValida, pagamentoDuplicado, produtoDoAviso } from "../supabase/functions/_shared/cakto-regras.js";
+import { cicloDoAviso, idDaAssinatura, mudancaDoEvento, normalizarEmail, origemValida, pagamentoDuplicado, produtoDoAviso } from "../supabase/functions/_shared/cakto-regras.js";
 
 const AGORA = Date.parse("2026-11-04T12:00:00Z");
 const DIA = 86400_000;
@@ -132,4 +132,36 @@ test("quem foi reembolsado e compra de novo volta a ter acesso, sem nova garanti
   assert.equal(p.cakto_subscription_id, "sub-5");
   assert.equal(p.first_payment_id, "pedido-5");
   assert.equal(p.guarantee_used, undefined);
+});
+
+test("a oferta anual vale para o Facilita e dá um ano de acesso", () => {
+  const agora = Date.parse("2026-11-05T12:00:00.000Z");
+  const data = { id: "pedido-a", offer: { id: "pqqz9rk" }, subscription: { id: "sub-a" } };
+  assert.equal(produtoDoAviso(data), "cobranca");
+  assert.equal(cicloDoAviso(data), "anual");
+  assert.equal(cicloDoAviso({ offer: { id: "x" }, checkoutUrl: "https://pay.cakto.com.br/pqqz9rk?callback=abc" }), "anual");
+  assert.equal(cicloDoAviso({ offer: { id: "3a8bf5i" } }), "mensal");
+  assert.equal(cicloDoAviso({ offer: { id: "outra" } }), null);
+
+  const patch = mudancaDoEvento("purchase_approved", data, { ...pendente, user_id: "uid", product: "cobranca" }, agora);
+  assert.equal(patch?.cycle, "anual");
+  assert.equal(patch?.price_cents, 19000);
+  assert.equal(patch?.current_period_end, new Date(agora + 366 * 86400_000).toISOString());
+});
+
+test("pagar o mensal com o anual guardado volta o plano para mensal", () => {
+  const agora = Date.parse("2026-11-05T12:00:00.000Z");
+  const data = { id: "pedido-m", offer: { id: "3a8bf5i" }, subscription: { id: "sub-m" } };
+  const patch = mudancaDoEvento("purchase_approved", data, { ...pendente, cycle: "anual", user_id: "uid", product: "cobranca" }, agora);
+  assert.equal(patch?.cycle, "mensal");
+  assert.equal(patch?.price_cents, 2999);
+  assert.equal(patch?.current_period_end, new Date(agora + 31 * 86400_000).toISOString());
+});
+
+test("renovar o anual mantém o plano e soma um ano", () => {
+  const agora = Date.parse("2027-11-05T12:00:00.000Z");
+  const sub = { ...ativa, cycle: "anual", user_id: "uid", product: "cobranca", cakto_subscription_id: "sub-a" };
+  const patch = mudancaDoEvento("subscription_renewed", { id: "pedido-2", offer: { id: "pqqz9rk" }, subscription: { id: "sub-a" } }, sub, agora);
+  assert.equal(patch?.cycle, undefined);
+  assert.equal(patch?.current_period_end, new Date(agora + 366 * 86400_000).toISOString());
 });

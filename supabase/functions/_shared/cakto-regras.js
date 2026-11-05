@@ -1,6 +1,6 @@
 // Regras dos avisos da Cakto, sem banco e sem rede, para poder testar.
 
-import { GRACE_DAYS, GUARANTEE_DAYS, PLANS } from "./plans.js";
+import { GRACE_DAYS, GUARANTEE_DAYS, PLANS, priceFor } from "./plans.js";
 
 const DAY = 86400_000;
 const iso = (ms) => new Date(ms).toISOString();
@@ -43,16 +43,27 @@ export function normalizarEmail(valor) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : null;
 }
 
+/** O aviso é desta oferta? Ele pode trazer o código curto, o completo ou só o link. */
+function daOferta(checkout, data) {
+  if (!checkout) return false;
+  const oferta = data?.offer?.id;
+  const curta = checkout.split("_")[0];
+  return oferta === checkout || oferta === curta || String(data?.checkoutUrl ?? "").includes(`/${curta}`);
+}
+
 /** Qual app foi comprado, pela oferta do aviso. A Cakto pode vender outros produtos na mesma conta. */
 export function produtoDoAviso(data) {
-  const oferta = data?.offer?.id;
-  const url = String(data?.checkoutUrl ?? "");
   for (const [product, plan] of Object.entries(PLANS)) {
-    if (!plan.checkout) continue;
-    const curta = plan.checkout.split("_")[0];
-    if (oferta === plan.checkout || oferta === curta || url.includes(`/${curta}`)) return product;
+    if (daOferta(plan.checkout, data) || daOferta(plan.checkoutAnual, data)) return product;
   }
   return null;
+}
+
+/** O plano que foi pago vale mais que o guardado: a pessoa pode ter trocado de plano com o pagamento aberto. */
+export function cicloDoAviso(data) {
+  const anual = Object.values(PLANS).some((plan) => daOferta(plan.checkoutAnual, data));
+  if (anual) return "anual";
+  return produtoDoAviso(data) ? "mensal" : null;
 }
 
 /** Segunda assinatura paga por quem já está com uma ativa: por exemplo, duas abas de pagamento. */
@@ -76,9 +87,11 @@ export function mudancaDoEvento(event, data, sub, agora = Date.now()) {
       // Aviso repetido: o mesmo pedido não estende o acesso duas vezes.
       if (data.id && data.id === sub.last_payment_id) return ligacao;
       if (sub.status === "reembolsada" && !outra) return ligacao;
-      const fim = agora + (sub.cycle === "anual" ? 366 : 31) * DAY;
+      const ciclo = cicloDoAviso(data) ?? sub.cycle;
+      const fim = agora + (ciclo === "anual" ? 366 : 31) * DAY;
       return {
         ...ligacao,
+        ...(ciclo !== sub.cycle ? { cycle: ciclo, price_cents: priceFor(sub.user_id, sub.product, ciclo) } : {}),
         ...(outra ? { cakto_subscription_id: id } : {}),
         status: "ativa",
         provider: "cakto",

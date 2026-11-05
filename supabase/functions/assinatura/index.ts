@@ -67,7 +67,7 @@ async function criar(who: Who, product: string, body: Body) {
     refunded_at: null, canceled_at: null,
   };
 
-  const oferta = PLANS[product].checkout;
+  const oferta = (cycle === "anual" && PLANS[product].checkoutAnual) || PLANS[product].checkout;
   if (oferta) {
     if (!caktoPronta) throw new Aviso("O pagamento ainda não está configurado.");
     const token = current?.checkout_token ?? crypto.randomUUID();

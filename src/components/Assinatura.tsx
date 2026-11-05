@@ -20,7 +20,8 @@ export function Assinatura({ product }: { product: ProductId }) {
   const { user, sub } = useSession();
   const p = PRODUCTS[product];
   const access = hasAccess(sub);
-  const [cycle, setCycle] = useState<"mensal" | "anual">(p.yearlyPrice ? "anual" : "mensal");
+  // No Facilita, o mensal vem marcado: é o preço que o anúncio e a página de venda mostram.
+  const [cycle, setCycle] = useState<"mensal" | "anual">(p.yearlyPrice && !p.checkoutExterno ? "anual" : "mensal");
   const [name, setName] = useState("");
   const [doc, setDoc] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -49,9 +50,9 @@ export function Assinatura({ product }: { product: ProductId }) {
     }
   }
 
-  const pagar = () => run("assinar", async () => {
+  const pagar = (ciclo: "mensal" | "anual" = cycle) => run("assinar", async () => {
     const semDados = simulated || externo;
-    const res = await criar({ product, cycle, name: semDados ? undefined : name, cpfCnpj: semDados ? undefined : doc });
+    const res = await criar({ product, cycle: ciclo, name: semDados ? undefined : name, cpfCnpj: semDados ? undefined : doc });
     if (res.url) window.location.href = res.url;
   });
 
@@ -109,6 +110,7 @@ export function Assinatura({ product }: { product: ProductId }) {
 
   // ---------- esperando o pagamento ----------
   if (sub?.status === "pendente") {
+    const outroCiclo = sub.cycle === "anual" ? "mensal" : "anual";
     return (
       <div className="split night" data-app={product}>
         <Pitch product={product} />
@@ -116,10 +118,14 @@ export function Assinatura({ product }: { product: ProductId }) {
           <div className="in">
             <Track step={2} />
             <h2>Falta só o pagamento</h2>
+            <div className="total"><span className="muted">Plano {sub.cycle}</span><b>{brl(sub.priceCents)}</b></div>
             <Notice kind="info">{externo ? "Depois de pagar, volte para esta tela: o app abre sozinho. No Pix e no cartão leva segundos." : "Assim que o pagamento for confirmado, o app abre sozinho aqui. No Pix e no cartão leva segundos; no boleto, até 3 dias úteis."}</Notice>
             <ErrorBox error={error} />
             {externo ? (
-              <button className="btn pay-btn" disabled={!!pending} onClick={pagar}>{pending ? "Abrindo o pagamento…" : "Abrir o pagamento"}</button>
+              <>
+                <button className="btn pay-btn" disabled={!!pending} onClick={() => pagar(sub.cycle)}>{pending ? "Abrindo o pagamento…" : "Abrir o pagamento"}</button>
+                {p.yearlyPrice && <button className="link-btn" disabled={!!pending} onClick={() => pagar(outroCiclo)}>Trocar para o plano {outroCiclo}</button>}
+              </>
             ) : (
               sub.invoiceUrl && <a className="btn pay-btn" href={sub.invoiceUrl}>Abrir o pagamento</a>
             )}

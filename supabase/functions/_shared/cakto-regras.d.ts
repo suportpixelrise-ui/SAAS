@@ -12,3 +12,4 @@ export declare function normalizarEmail(valor: unknown): string | null;
 export declare function produtoDoAviso(data: Dados): "cobranca" | "sobra" | null;
 export declare function pagamentoDuplicado(event: string, data: Dados, sub: Dados, agora?: number): boolean;
 export declare function mudancaDoEvento(event: string, data: Dados, sub: Dados, agora?: number): Record<string, unknown> | null;
+export declare function cicloDoAviso(data: unknown): "mensal" | "anual" | null;
