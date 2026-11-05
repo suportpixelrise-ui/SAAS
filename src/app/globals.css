@@ -550,3 +550,12 @@ form { margin: 0; }
 .cookies a { color: inherit; }
 .cookies div { display: flex; gap: 8px; }
 .cookies .btn { flex: 1; }
+
+/* Mensal e anual do mesmo tamanho na seção de preço. */
+.planos { display: grid; gap: 12px; }
+.plano { display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 18px; border: 1px solid var(--border); background: var(--surface-2); }
+.plano.anual { border-color: var(--accent); background: var(--accent-soft); }
+.plano-t { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-weight: 650; }
+.plano-t em { padding: 4px 10px; border-radius: 999px; background: var(--accent); color: #fff; font-style: normal; font-size: 14px; }
+.plano .price-n { font-size: clamp(40px, 11vw, 56px); }
+.plano .price-n small { font-size: 15px; }

@@ -225,8 +225,19 @@ export function Landing({ id }: { id: ProductId }) {
         <Section id="preco" title={c.titles.price}>
           <div className="price">
             <div className="stack" style={{ gap: 18 }}>
-              <div className="price-n">{price} <small>por mês</small></div>
-              {p.yearlyPrice && <div className="seal"><div><b>Ou {brl(p.yearlyPrice)} por ano</b><span>Sai {brl(Math.round(p.yearlyPrice / 12))} por mês e você economiza {brl(p.prices[0] * 12 - p.yearlyPrice)}. Você escolhe o plano depois de criar a conta.</span></div></div>}
+              {p.yearlyPrice ? (
+                <div className="planos">
+                  <div className="plano">
+                    <span className="plano-t">Mensal</span>
+                    <div className="price-n">{price} <small>por mês</small></div>
+                  </div>
+                  <div className="plano anual">
+                    <span className="plano-t">Anual <em>Economize {brl(p.prices[0] * 12 - p.yearlyPrice)} por ano</em></span>
+                    <div className="price-n">{brl(p.yearlyPrice)} <small>por ano. Sai {brl(Math.round(p.yearlyPrice / 12))} por mês, em vez de {price}</small></div>
+                  </div>
+                  <span className="muted small">Você escolhe o plano depois de criar a conta.</span>
+                </div>
+              ) : <div className="price-n">{price} <small>por mês</small></div>}
               <div className="seal"><i>{GUARANTEE_DAYS}</i><div><b>Dias de garantia</b><span>Pediu no app, o dinheiro volta.</span></div></div>
             </div>
             <div className="stack" style={{ gap: 14 }}>
